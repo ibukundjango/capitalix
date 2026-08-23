@@ -1,0 +1,9 @@
+{% extends "emails/base_email.html" %}
+{% block title %}Loan Update{% endblock %}
+{% block hero_title %}Loan Status Update{% endblock %}
+{% block content %}
+<h1>Loan Update</h1>
+<p>Dear {{ user.first_name }},</p>
+<p>Your loan application ({{ loan_type }}) has been <strong>{{ status }}</strong>.</p>
+<p>Amount: ${{ amount|floatformat:2 }}</p>
+{% endblock %}

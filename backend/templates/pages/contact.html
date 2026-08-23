@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact Capitalix | Phone, Email, Branch Hours & Locations{% endblock %}
+
+{% block meta_description %}
+    Contact the Capitalix team by phone, email, or message form. Find branch hours, locations, and support options for personal and business banking.
+{% endblock %}
+
+{% block og_title %}Contact Capitalix | Phone, Email, Branch Hours & Locations{% endblock %}
+
+{% block og_description %}
+    Contact the Capitalix team by phone, email, or message form. Find branch hours, locations, and support options for personal and business banking.
+{% endblock %}
+
+{% block body_class %}contact-page{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       CONTACT PAGE – EXTRA STYLES
+       ============================================================ */
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 2.5rem;
+        align-items: start;
+    }
+
+    .contact-grid .form-card {
+        padding: 2rem;
+    }
+
+    .contact-grid .form-card h2 {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.25rem;
+    }
+
+    .contact-grid .form-card .form-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0 0 1.5rem;
+    }
+
+    /* Info cards in the grid */
+    .contact-info-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .contact-info-card:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    .contact-info-card .icon-badge {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.6rem;
+        flex-shrink: 0;
+    }
+
+    .contact-info-card h3 {
+        font-size: 1.05rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .contact-info-card p {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .contact-info-card .contact-detail {
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    /* Map placeholder */
+    .map-placeholder {
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        background: var(--surface-2);
+        min-height: 240px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
+    }
+
+    .map-placeholder .map-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Support quick list */
+    .support-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin: 0.5rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .support-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        padding: 0.3rem 0;
+    }
+
+    .support-list li .label {
+        font-weight: 500;
+        color: var(--text);
+        min-width: 80px;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 900px) {
+        .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .contact-grid .form-card {
+            order: 2;
+        }
+
+        .contact-grid .contact-sidebar {
+            order: 1;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .contact-grid .form-card {
+            padding: 1.25rem;
+        }
+
+        .contact-grid .form-card .field-row {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .support-list li {
+            flex-wrap: wrap;
+        }
+
+        .support-list li .label {
+            min-width: 60px;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    :root[data-theme="dark"] .contact-info-card {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .map-placeholder {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .contact-info-card .icon-badge {
+        background: var(--accent-soft);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="page-hero">
+    <div class="container">
+
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            Contact
+        </p>
+
+        <h1 class="display" style="max-width:22ch;">
+            We're Here to Help
+        </h1>
+
+        <p class="lead" style="max-width:66ch;">
+            Questions about an account, a loan, or getting started? Send us a message and a member of
+            the Capitalix team will follow up.
+        </p>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CONTACT INFO CARDS
+     ============================================================ -->
+<section class="section section--tight" style="padding-top:2.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="grid grid--4">
+
+            <!-- Phone -->
+            <article class="contact-info-card reveal" id="phone">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1.5 1.5 0 0 1-1.7 1.5C10.9 19.7 4.3 13.1 3.5 5.7A1.5 1.5 0 0 1 5 4Z"/>
+                    </svg>
+                </span>
+                <h3>Phone</h3>
+                <p>
+                    <span class="contact-detail">1‑617‑785‑5366</span><br />
+                    <span class="small muted">24/7 support line</span>
+                </p>
+            </article>
+
+            <!-- Email -->
+            <article class="contact-info-card reveal" id="email">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="3" y="5.5" width="18" height="13" rx="2"/>
+                        <path d="M3.6 6.8 12 13l8.4-6.2"/>
+                    </svg>
+                </span>
+                <h3>Email</h3>
+                <p>
+                    <span class="contact-detail">support@capitalix.com</span><br />
+                    <span class="small muted">We respond within 24 hours</span>
+                </p>
+            </article>
+
+            <!-- Branch Hours -->
+            <article class="contact-info-card reveal" id="hours">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="12" r="8.5"/>
+                        <path d="M12 7.5V12l3.2 2"/>
+                    </svg>
+                </span>
+                <h3>Branch Hours</h3>
+                <p>
+                    <span class="contact-detail">Mon–Fri: 9AM–5PM</span><br />
+                    <span class="contact-detail">Sat: 9AM–1PM</span><br />
+                    <span class="small muted">Closed Sundays &amp; federal holidays</span>
+                </p>
+            </article>
+
+            <!-- Locations -->
+            <article class="contact-info-card reveal" id="locations">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/>
+                        <circle cx="12" cy="10" r="2.6"/>
+                    </svg>
+                </span>
+                <h3>Locations</h3>
+                <p>
+                    <span class="contact-detail">123 Main Street</span><br />
+                    <span class="contact-detail">New York, NY 10001</span><br />
+                    <span class="small muted">Visit us in person</span>
+                </p>
+            </article>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     FORM + MAP / SIDEBAR
+     ============================================================ -->
+<section class="section section--alt" style="padding-top:3rem;">
+    <div class="container">
+
+        <div class="contact-grid">
+
+            <!-- ============================================================
+                 CONTACT FORM
+                 ============================================================ -->
+            <form class="form-card" method="post" action="{% url 'contact' %}" novalidate>
+                {% csrf_token %}
+
+                <h2>Send a Message</h2>
+                <p class="form-subtitle">Fill in the details below and our team will get back to you.</p>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="id_first_name">First Name</label>
+                        <input class="input" id="id_first_name" name="first_name" type="text"
+                               autocomplete="given-name" required
+                               placeholder="e.g. Jane" />
+                    </div>
+                    <div class="field">
+                        <label for="id_last_name">Last Name</label>
+                        <input class="input" id="id_last_name" name="last_name" type="text"
+                               autocomplete="family-name" required
+                               placeholder="e.g. Smith" />
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="id_email">Email</label>
+                        <input class="input" id="id_email" name="email" type="email"
+                               autocomplete="email" required
+                               placeholder="you@example.com" />
+                    </div>
+                    <div class="field">
+                        <label for="id_phone">Phone</label>
+                        <input class="input" id="id_phone" name="phone" type="tel"
+                               autocomplete="tel"
+                               placeholder="(555) 000-0000" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="id_subject">Subject</label>
+                    <select class="select" id="id_subject" name="subject" required>
+                        <option value="">Select a topic</option>
+                        <option value="opening">Opening an account</option>
+                        <option value="personal">Personal banking</option>
+                        <option value="business">Business banking</option>
+                        <option value="loans">Loans and financing</option>
+                        <option value="online">Online banking</option>
+                        <option value="security">Security concern</option>
+                        <option value="other">Something else</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="id_message">Message</label>
+                    <textarea class="textarea" id="id_message" name="message"
+                              required placeholder="How can we help you?" rows="5"></textarea>
+                </div>
+
+                <button class="btn btn--primary btn--block" type="submit">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                        <path d="M22 2 2 8l8 4 4-4"/>
+                        <path d="M10 12v8l4-4 6-4L22 2l-8 4-4 6Z"/>
+                    </svg>
+                    Send Message
+                </button>
+
+                <p class="form-note" style="margin-top:1.25rem;">
+                    <strong>Privacy note:</strong> Please do not include account numbers, passwords,
+                    or other sensitive information in this form. Your message is secure and will only
+                    be used to respond to your inquiry.
+                </p>
+
+                {% if messages %}
+                    <div style="margin-top:1rem;">
+                        {% for message in messages %}
+                            <div class="alert {{ message.tags }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            </form>
+
+            <!-- ============================================================
+                 SIDEBAR
+                 ============================================================ -->
+            <div class="contact-sidebar stack">
+
+                <!-- Map Placeholder -->
+                <div class="map-placeholder">
+                    <div>
+                        <div class="map-icon" aria-hidden="true">📍</div>
+                        <p style="margin:0;font-weight:600;">Map placeholder</p>
+                        <p class="small" style="margin:0.4rem 0 0;">
+                            <strong>Capitalix Branch</strong><br />
+                            239 Oxford Road<br />
+                            Brooklyn, NY 11237
+                        </p>
+                        <p class="small" style="margin:0.8rem 0 0;color:var(--text-muted);">
+                            <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">
+                                View on Google Maps →
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Support at a glance -->
+                <div class="contact-info-card">
+                    <h3 style="margin:0 0 0.5rem;">Support at a glance</h3>
+                    <ul class="support-list">
+                        <li>
+                            <span class="label">Phone:</span>
+                            <span>1‑617‑785‑5366</span>
+                        </li>
+                        <li>
+                            <span class="label">Email:</span>
+                            <span>support@capitalix.com</span>
+                        </li>
+                        <li>
+                            <span class="label">Hours:</span>
+                            <span>Mon–Fri 9AM–5PM, Sat 9AM–1PM</span>
+                        </li>
+                        <li>
+                            <span class="label">Online:</span>
+                            <span><a href="{% url 'online-banking' %}" style="color:var(--accent);">24/7 online banking</a></span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="section cta-band">
+    <div class="container">
+
+        <h2 class="display">Ready to Take the Next Step?</h2>
+
+        <p class="lead" style="margin:0 auto 1.75rem;">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    Manage your Capitalix operations from your staff dashboard.
+                {% else %}
+                    Access your accounts and manage your finances online.
+                {% endif %}
+            {% else %}
+                Open an account and experience a simpler way to manage your money.
+            {% endif %}
+        </p>
+
+        <div class="btn-row">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#main">
+                Back to Top
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pre-fill message from chat if coming from support widget
+        const savedMessage = sessionStorage.getItem('capitalix_support_message');
+        if (savedMessage) {
+            const messageField = document.getElementById('id_message');
+            if (messageField) {
+                messageField.value = savedMessage;
+                sessionStorage.removeItem('capitalix_support_message');
+            }
+        }
+    });
+</script>
+{% endblock %}

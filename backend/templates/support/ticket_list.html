@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Support Tickets | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View and manage your Capitalix support tickets.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .tickets-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .tickets-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .tickets-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .tickets-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .tickets-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .tickets-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .ticket-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+    }
+
+    .ticket-item:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    .ticket-item .ticket-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ticket-item .ticket-info .ticket-subject {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--text);
+    }
+
+    .ticket-item .ticket-info .ticket-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .ticket-item .ticket-info .ticket-meta .category {
+        display: inline-block;
+        padding: 0.1rem 0.5rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.65rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .ticket-item .ticket-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.3rem;
+        text-align: right;
+    }
+
+    .ticket-item .ticket-right .status-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .ticket-item .ticket-right .status-badge--open {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .ticket-item .ticket-right .status-badge--in_progress {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .ticket-item .ticket-right .status-badge--resolved {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .ticket-item .ticket-right .status-badge--closed {
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .ticket-item .ticket-right .ticket-date {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .tickets-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .ticket-item {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 1.25rem 1rem;
+        }
+
+        .ticket-item .ticket-right {
+            align-items: center;
+            text-align: center;
+        }
+
+        .ticket-item .ticket-info .ticket-meta {
+            justify-content: center;
+        }
+    }
+
+    :root[data-theme="dark"] .ticket-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .ticket-item .ticket-right .status-badge--open {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="tickets-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Support Tickets</span>
+                </p>
+                <h1>Support Tickets</h1>
+                <p class="sub">View and manage your support requests.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'ticket_create' %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Open New Ticket
+                </a>
+            </div>
+
+        </div>
+
+        {% if tickets %}
+            <div style="display:flex; flex-direction:column;">
+                {% for ticket in tickets %}
+                    <div class="ticket-item">
+
+                        <div class="ticket-info">
+                            <span class="ticket-subject">{{ ticket.subject }}</span>
+                            <div class="ticket-meta">
+                                <span class="category">{{ ticket.get_category_display|default:"General" }}</span>
+                                <span>📅 {{ ticket.created_at|date:"M d, Y" }}</span>
+                                {% if ticket.updated_at %}
+                                    <span>🔄 Updated: {{ ticket.updated_at|date:"M d, Y" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="ticket-right">
+                            <span class="status-badge
+                                {% if ticket.status == 'OPEN' %}status-badge--open
+                                {% elif ticket.status == 'IN_PROGRESS' %}status-badge--in_progress
+                                {% elif ticket.status == 'RESOLVED' %}status-badge--resolved
+                                {% elif ticket.status == 'CLOSED' %}status-badge--closed{% endif %}">
+                                {{ ticket.get_status_display }}
+                            </span>
+                            <a href="{% url 'ticket_detail' ticket.id %}" class="link-arrow" style="font-size:0.85rem;">
+                                View Details
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M5 12h13"/><path d="M13 6.5 18.5 12 13 17.5"/>
+                                </svg>
+                            </a>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon" aria-hidden="true">🎫</div>
+                <h3>No support tickets</h3>
+                <p>You haven't opened any support tickets yet. Our team is here to help.</p>
+                <a href="{% url 'ticket_create' %}" class="btn btn--primary">Open a Ticket</a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

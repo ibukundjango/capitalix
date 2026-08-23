@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payees | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Manage your Capitalix bill pay payees.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .payee-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .payee-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .payee-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .payee-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .payee-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .payee-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .payee-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .payee-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .payee-item:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    .payee-item .payee-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .payee-item .payee-info .payee-name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--text);
+    }
+
+    .payee-item .payee-info .payee-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .payee-item .payee-info .payee-meta span {
+        margin-right: 0.5rem;
+    }
+
+    .payee-item .payee-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .payee-item .payee-actions .btn {
+        min-height: 36px;
+        padding: 0.4rem 1rem;
+        font-size: 0.82rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .payee-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .payee-header .header-actions {
+            justify-content: stretch;
+        }
+
+        .payee-header .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .payee-item {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 1.25rem 1rem;
+        }
+
+        .payee-item .payee-actions {
+            justify-content: center;
+        }
+    }
+
+    :root[data-theme="dark"] .payee-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="payee-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'bill_pay' %}">Bill Pay</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Payees</span>
+                </p>
+                <h1>Your Payees</h1>
+                <p class="sub">Manage the companies and individuals you pay regularly.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'payee_add' %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Add Payee
+                </a>
+                <a href="{% url 'bill_pay' %}" class="btn btn--outline btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <rect x="3" y="7" width="18" height="12" rx="2"/>
+                        <path d="M3 11h18"/>
+                    </svg>
+                    Pay a Bill
+                </a>
+            </div>
+
+        </div>
+
+        {% if payees %}
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                {% for payee in payees %}
+                    <div class="payee-item">
+                        <div class="payee-info">
+                            <span class="payee-name">{{ payee.name }}</span>
+                            <span class="payee-meta">
+                                <span>🏦 {{ payee.bank_name|default:"—" }}</span>
+                                <span>🔢 {{ payee.account_number|default:"—" }}</span>
+                            </span>
+                        </div>
+                        <div class="payee-actions">
+                            <a href="{% url 'bill_pay' %}?payee={{ payee.pk }}" class="btn btn--primary btn--sm">
+                                Pay Now
+                            </a>
+                            <button class="btn btn--outline btn--sm" disabled style="opacity:0.5; cursor:not-allowed;">
+                                Edit
+                            </button>
+                            <button class="btn btn--outline btn--sm" disabled style="opacity:0.5; cursor:not-allowed; color:#b91c1c;">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon" aria-hidden="true">📋</div>
+                <h3>No payees added yet</h3>
+                <p>Add your first payee to start scheduling bill payments.</p>
+                <a href="{% url 'payee_add' %}" class="btn btn--primary">Add a Payee</a>
+            </div>
+        {% endif %}
+
+        <div class="form-note" style="margin-top:2rem; padding:1rem 1.25rem;">
+            <strong>Coming soon:</strong> Edit, delete, and bulk manage payees – plus the ability to set up automatic recurring payments.
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

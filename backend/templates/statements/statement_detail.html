@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Statement | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View your Capitalix account statement for {{ month_name }} {{ year }}.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .statement-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .statement-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .statement-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .statement-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .statement-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .statement-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .statement-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .statement-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .statement-summary .summary-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1rem 1.25rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .statement-summary .summary-item .label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 0 0 0.15rem;
+    }
+
+    .statement-summary .summary-item .value {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        font-variant-numeric: tabular-nums;
+        margin: 0;
+    }
+
+    .statement-summary .summary-item .value.positive {
+        color: var(--positive);
+    }
+
+    .statement-summary .summary-item .value.negative {
+        color: #b91c1c;
+    }
+
+    /* Statement table */
+    .statement-table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .statement-table-wrap table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 480px;
+    }
+
+    .statement-table-wrap table thead th {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        font-weight: 700;
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .statement-table-wrap table tbody td {
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+        color: var(--text);
+    }
+
+    .statement-table-wrap table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .statement-table-wrap table tbody td .amount-positive {
+        color: var(--positive);
+        font-weight: 600;
+    }
+
+    .statement-table-wrap table tbody td .amount-negative {
+        color: #b91c1c;
+        font-weight: 600;
+    }
+
+    .statement-table-wrap table tfoot td {
+        padding: 0.75rem 1.25rem;
+        border-top: 2px solid var(--border);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .statement-table-wrap table tfoot td .label {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .statement-table-wrap table tfoot td .total-value {
+        font-family: var(--font-display);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .statement-table-wrap table tfoot td .total-value.positive {
+        color: var(--positive);
+    }
+
+    .statement-table-wrap table tfoot td .total-value.negative {
+        color: #b91c1c;
+    }
+
+    .empty-state-table {
+        text-align: center;
+        padding: 2.5rem 1.5rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state-table .icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-table h3 {
+        font-size: 1.1rem;
+        color: var(--text);
+        margin: 0.25rem 0 0.3rem;
+    }
+
+    @media (max-width: 640px) {
+        .statement-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .statement-header .header-actions {
+            justify-content: stretch;
+        }
+
+        .statement-header .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .statement-summary {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .statement-summary .summary-item .value {
+            font-size: 1.1rem;
+        }
+
+        .statement-table-wrap table {
+            font-size: 0.85rem;
+            min-width: 400px;
+        }
+
+        .statement-table-wrap table th,
+        .statement-table-wrap table td {
+            padding: 0.6rem 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .statement-summary {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    :root[data-theme="dark"] .statement-summary .summary-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .statement-table-wrap {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .statement-table-wrap table thead th {
+        background: var(--surface-2);
+    }
+
+    :root[data-theme="dark"] .statement-summary .summary-item .value.negative {
+        color: #f87171;
+    }
+
+    :root[data-theme="dark"] .statement-table-wrap table tbody td .amount-negative {
+        color: #f87171;
+    }
+
+    :root[data-theme="dark"] .statement-table-wrap table tfoot td .total-value.negative {
+        color: #f87171;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <!-- ============================================================
+             HEADER
+             ============================================================ -->
+        <div class="statement-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'statement_form' %}">Statements</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">{{ month_name }} {{ year }}</span>
+                </p>
+                <h1>{{ account.get_account_type_display }} Statement</h1>
+                <p class="sub">{{ month_name }} {{ year }} &bull; Account: <strong>{{ account.account_number }}</strong></p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'statement_form' %}" class="btn btn--outline btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Back
+                </a>
+                <a href="{% url 'statement_download' account.id year month %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download PDF
+                </a>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             SUMMARY
+             ============================================================ -->
+        <div class="statement-summary">
+            <div class="summary-item">
+                <p class="label">Starting Balance</p>
+                <p class="value">{{ starting_balance|floatformat:2 }}</p>
+            </div>
+            <div class="summary-item">
+                <p class="label">Total In</p>
+                <p class="value positive">+${{ total_in|floatformat:2 }}</p>
+            </div>
+            <div class="summary-item">
+                <p class="label">Total Out</p>
+                <p class="value negative">-${{ total_out|floatformat:2 }}</p>
+            </div>
+            <div class="summary-item">
+                <p class="label">Ending Balance</p>
+                <p class="value">{{ ending_balance|floatformat:2 }}</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             TRANSACTIONS
+             ============================================================ -->
+        <div class="statement-table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Description</th>
+                        <th scope="col" style="text-align:right;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                        <tr>
+                            <td>{{ tx.created_at|date:"M d, Y" }}</td>
+                            <td>{{ tx.description }}</td>
+                            <td style="text-align:right;">
+                                {% if tx.amount >= 0 %}
+                                    <span class="amount-positive">+${{ tx.amount|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="amount-negative">-${{ tx.amount|floatformat:2 }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">
+                                <div class="empty-state-table">
+                                    <div class="icon" aria-hidden="true">📭</div>
+                                    <h3>No transactions</h3>
+                                    <p>There were no transactions for this statement period.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" style="text-align:right;">
+                            <span class="label">Total In</span>
+                        </td>
+                        <td style="text-align:right;">
+                            <span class="total-value positive">+${{ total_in|floatformat:2 }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:right;">
+                            <span class="label">Total Out</span>
+                        </td>
+                        <td style="text-align:right;">
+                            <span class="total-value negative">-${{ total_out|floatformat:2 }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:right;">
+                            <span class="label">Ending Balance</span>
+                        </td>
+                        <td style="text-align:right;">
+                            <span class="total-value">${{ ending_balance|floatformat:2 }}</span>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- ============================================================
+             FOOTER
+             ============================================================ -->
+        <div class="form-note" style="margin-top:2rem; padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <span>
+                <strong>Statement period:</strong> {{ month_name }} {{ year }}
+            </span>
+            <span>
+                <strong>Account:</strong> {{ account.account_number }}
+            </span>
+            <span>
+                <strong>Generated:</strong> {% now "F j, Y H:i" %}
+            </span>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

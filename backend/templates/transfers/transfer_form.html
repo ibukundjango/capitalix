@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Transfer Money | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Transfer money between accounts or to other recipients securely.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .transfer-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 2rem;
+        align-items: start;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .transfer-form-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .transfer-form-card .form-header .eyebrow {
+        margin-bottom: 0.2rem;
+    }
+
+    .transfer-form-card .form-header h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .transfer-form-card .form-header .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 1.25rem;
+    }
+
+    .transfer-form-card .field {
+        margin-bottom: 1.1rem;
+    }
+
+    .transfer-form-card .field label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    .transfer-form-card .field input,
+    .transfer-form-card .field select,
+    .transfer-form-card .field textarea {
+        width: 100%;
+        min-height: 50px;
+        padding: 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .transfer-form-card .field input:focus,
+    .transfer-form-card .field select:focus,
+    .transfer-form-card .field textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .transfer-form-card .field input::placeholder,
+    .transfer-form-card .field textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 0.6;
+        font-weight: 400;
+    }
+
+    .transfer-form-card .field select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.8rem;
+    }
+
+    .transfer-form-card .field .hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0.35rem 0 0;
+        line-height: 1.4;
+    }
+
+    .transfer-form-card .field .error-text {
+        color: #c0392b;
+        font-size: 0.78rem;
+        margin: 0.25rem 0 0;
+        min-height: 1em;
+    }
+
+    .transfer-form-card .field textarea {
+        min-height: 60px;
+        resize: vertical;
+    }
+
+    .transfer-form-card .form-note {
+        margin-top: 1.25rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        border: 1px dashed var(--border-strong);
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+    }
+
+    .transfer-sidebar .card {
+        margin-bottom: 1rem;
+    }
+
+    .transfer-sidebar .card .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .transfer-sidebar .card h3 {
+        font-size: 1rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .transfer-sidebar .card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .transfer-sidebar .card ul {
+        margin: 0.5rem 0 0 1rem;
+        padding: 0;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    .transfer-sidebar .card ul li {
+        margin-bottom: 0.2rem;
+    }
+
+    @media (max-width: 860px) {
+        .transfer-grid {
+            grid-template-columns: 1fr;
+            max-width: 100%;
+        }
+
+        .transfer-form-card {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .transfer-form-card {
+            padding: 1.25rem;
+        }
+
+        .transfer-form-card .field input,
+        .transfer-form-card .field select,
+        .transfer-form-card .field textarea {
+            min-height: 44px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    :root[data-theme="dark"] .transfer-form-card {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .transfer-form-card .field input,
+    :root[data-theme="dark"] .transfer-form-card .field select,
+    :root[data-theme="dark"] .transfer-form-card .field textarea {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .transfer-form-card .field input:focus,
+    :root[data-theme="dark"] .transfer-form-card .field select:focus,
+    :root[data-theme="dark"] .transfer-form-card .field textarea:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="transfer-grid">
+
+            <!-- ============================================================
+                 TRANSFER FORM
+                 ============================================================ -->
+            <div>
+                <div class="transfer-form-card">
+
+                    <div class="form-header">
+                        <p class="eyebrow">Funds Transfer</p>
+                        <h1>Send Money</h1>
+                        <p class="sub">Enter the recipient details below to make a transfer.</p>
+                    </div>
+
+                    <form method="post" action="{% url 'transfer' %}" novalidate>
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+
+                        <div class="field">
+                            <label for="{{ form.from_account.id_for_label }}">From Account</label>
+                            {{ form.from_account }}
+                            {{ form.from_account.errors }}
+                        </div>
+
+                        <div class="field">
+                            <label for="{{ form.recipient_name.id_for_label }}">Recipient Name</label>
+                            {{ form.recipient_name }}
+                            {{ form.recipient_name.errors }}
+                            {% if form.recipient_name.help_text %}
+                                <p class="hint">{{ form.recipient_name.help_text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="field">
+                            <label for="{{ form.recipient_account_number.id_for_label }}">Recipient Account Number</label>
+                            {{ form.recipient_account_number }}
+                            {{ form.recipient_account_number.errors }}
+                        </div>
+
+                        <div class="field">
+                            <label for="{{ form.recipient_routing_number.id_for_label }}">Recipient Routing Number</label>
+                            {{ form.recipient_routing_number }}
+                            {{ form.recipient_routing_number.errors }}
+                            {% if form.recipient_routing_number.help_text %}
+                                <p class="hint">{{ form.recipient_routing_number.help_text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="field">
+                            <label for="{{ form.amount.id_for_label }}">Amount</label>
+                            {{ form.amount }}
+                            {{ form.amount.errors }}
+                        </div>
+
+                        <div class="field">
+                            <label for="{{ form.reference.id_for_label }}">Reference <span class="muted" style="font-weight:400;font-size:0.8rem;">(Optional)</span></label>
+                            {{ form.reference }}
+                            {{ form.reference.errors }}
+                            {% if form.reference.help_text %}
+                                <p class="hint">{{ form.reference.help_text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn--primary btn--block" style="margin-top:0.5rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                                <path d="M3 12h18M3 6h18M3 18h18"/>
+                                <path d="M7 6v4M17 14v4"/>
+                            </svg>
+                            Review Transfer
+                        </button>
+
+                        <p class="form-note">
+                            <strong>Please verify all details carefully.</strong>
+                            Transfers cannot be reversed once processed.
+                        </p>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- ============================================================
+                 SIDEBAR – revised to be less promotional and more factual
+                 ============================================================ -->
+            <div class="transfer-sidebar">
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <circle cx="12" cy="12" r="8.5"/>
+                            <path d="M12 7.5V12l3.2 2"/>
+                        </svg>
+                    </div>
+                    <h3>Transfer Limits</h3>
+                    <ul>
+                        <li>Daily limit: <strong>$5,000</strong></li>
+                        <li>Transaction fee: <strong>$0</strong> for internal transfers</li>
+                        <li>Processing time: <strong>1‑2 business days</strong></li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M12 3.5l7 2.8v5.2c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6.3l7-2.8Z"/>
+                            <path d="M9.2 12.2l2 2 3.6-3.9"/>
+                        </svg>
+                    </div>
+                    <h3>Need help?</h3>
+                    <p>If you have questions about making a transfer, our team is here to assist.</p>
+                    <a href="{% url 'contact' %}" class="link-arrow" style="margin-top:0.5rem; display:inline-flex;">
+                        Contact Support
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M5 12h13"/><path d="M13 6.5 18.5 12 13 17.5"/>
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

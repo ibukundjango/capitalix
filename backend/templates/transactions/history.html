@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Transaction History | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View and filter your Capitalix transaction history.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .transactions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .transactions-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .transactions-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .transactions-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .transactions-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .transactions-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .transactions-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* Filter form */
+    .filter-form {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+
+    .filter-form .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-form .field {
+        margin-bottom: 0;
+    }
+
+    .filter-form .field label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.3rem;
+        color: var(--text-muted);
+        letter-spacing: 0.02em;
+    }
+
+    .filter-form .field input,
+    .filter-form .field select {
+        width: 100%;
+        min-height: 44px;
+        padding: 0.6rem 0.9rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.9rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .filter-form .field input:focus,
+    .filter-form .field select:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .filter-form .field select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.8rem;
+    }
+
+    .filter-form .field input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    .filter-form .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-form .filter-actions .btn {
+        min-height: 44px;
+        flex: 1;
+        min-width: 100px;
+    }
+
+    /* Transaction table */
+    .transactions-table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .transactions-table-wrap table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;  /* increased for receipt column */
+    }
+
+    .transactions-table-wrap table thead th {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        font-weight: 700;
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .transactions-table-wrap table thead th.text-right {
+        text-align: right;
+    }
+
+    .transactions-table-wrap table tbody td {
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+        color: var(--text);
+    }
+
+    .transactions-table-wrap table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .transactions-table-wrap table tbody td .account-mono {
+        font-family: var(--font-display);
+        font-variant-numeric: tabular-nums;
+        font-size: 0.85rem;
+        letter-spacing: 0.04em;
+    }
+
+    .transactions-table-wrap table tbody td .amount-positive {
+        color: var(--positive);
+        font-weight: 600;
+    }
+
+    .transactions-table-wrap table tbody td .amount-negative {
+        color: #b91c1c;
+        font-weight: 600;
+    }
+
+    .transactions-table-wrap table tbody td .status-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .transactions-table-wrap table tbody td .status-badge--completed {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .transactions-table-wrap table tbody td .status-badge--pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .transactions-table-wrap table tbody td .status-badge--failed {
+        background: rgba(239, 68, 68, 0.12);
+        color: #b91c1c;
+    }
+
+    .receipt-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .receipt-link:hover {
+        text-decoration: underline;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    .transactions-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.88rem;
+        color: var(--text-muted);
+    }
+
+    .transactions-summary .count {
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    @media (max-width: 860px) {
+        .filter-form .filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .transactions-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-form .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-form .filter-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .transactions-table-wrap table {
+            font-size: 0.85rem;
+            min-width: 560px;
+        }
+
+        .transactions-table-wrap table th,
+        .transactions-table-wrap table td {
+            padding: 0.6rem 0.8rem;
+        }
+    }
+
+    :root[data-theme="dark"] .filter-form {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .filter-form .field input,
+    :root[data-theme="dark"] .filter-form .field select {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .filter-form .field input:focus,
+    :root[data-theme="dark"] .filter-form .field select:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    :root[data-theme="dark"] .transactions-table-wrap {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .transactions-table-wrap table thead th {
+        background: var(--surface-2);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .transactions-table-wrap table tbody td .amount-negative {
+        color: #f87171;
+    }
+
+    :root[data-theme="dark"] .transactions-table-wrap table tbody td .status-badge--pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    :root[data-theme="dark"] .transactions-table-wrap table tbody td .status-badge--failed {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="transactions-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Transactions</span>
+                </p>
+                <h1>Transaction History</h1>
+                <p class="sub">View and filter all your account activity.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'transfer' %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                        <path d="M7 6v4M17 14v4"/>
+                    </svg>
+                    Transfer Money
+                </a>
+            </div>
+
+        </div>
+
+        <!-- FILTER FORM -->
+        <form method="get" class="filter-form">
+            <div class="filter-grid">
+                <div class="field">
+                    <label for="id_date_from">From Date</label>
+                    {{ form.date_from }}
+                </div>
+                <div class="field">
+                    <label for="id_date_to">To Date</label>
+                    {{ form.date_to }}
+                </div>
+                <div class="field">
+                    <label for="id_transaction_type">Transaction Type</label>
+                    {{ form.transaction_type }}
+                </div>
+                <div class="field">
+                    <label for="id_status">Status</label>
+                    {{ form.status }}
+                </div>
+                <div class="field">
+                    <label for="id_description">Description</label>
+                    {{ form.description }}
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn--primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                            <polyline points="22 3 22 8 17 8"/>
+                            <path d="M22 3l-6.4 6.4A8 8 0 1 1 9.6 4.6L14.6 8"/>
+                        </svg>
+                        Apply Filters
+                    </button>
+                    <a href="{% url 'transaction_history' %}" class="btn btn--outline btn--sm">
+                        Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- TRANSACTIONS TABLE -->
+        {% if transactions %}
+            <div class="transactions-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Account</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Type</th>
+                            <th scope="col" class="text-right">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                            <tr>
+                                <td>{{ tx.created_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    <span class="account-mono">•••• {{ tx.account.account_number|slice:"-4:" }}</span>
+                                </td>
+                                <td>{{ tx.description }}</td>
+                                <td>{{ tx.get_transaction_type_display }}</td>
+                                <td class="text-right">
+                                    {% if tx.amount >= 0 %}
+                                        <span class="amount-positive">+${{ tx.amount|floatformat:2 }}</span>
+                                    {% else %}
+                                        <span class="amount-negative">-${{ tx.amount|floatformat:2 }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="status-badge
+                                        {% if tx.status == 'COMPLETED' %}status-badge--completed
+                                        {% elif tx.status == 'PENDING' %}status-badge--pending
+                                        {% elif tx.status == 'FAILED' %}status-badge--failed{% endif %}">
+                                        {{ tx.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'transaction_receipt' tx.id %}" class="receipt-link" target="_blank">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="7 10 12 15 17 10"/>
+                                            <line x1="12" y1="15" x2="12" y2="3"/>
+                                        </svg>
+                                        Receipt
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="transactions-summary">
+                <span>Showing <span class="count">{{ transactions|length }}</span> transactions</span>
+                <span>Latest activity displayed</span>
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <div class="icon" aria-hidden="true">📭</div>
+                <h3>No transactions found</h3>
+                <p>Try adjusting your filters or check back later for new activity.</p>
+                <a href="{% url 'transaction_history' %}" class="btn btn--outline">Clear Filters</a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

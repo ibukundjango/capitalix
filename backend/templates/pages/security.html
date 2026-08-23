@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Security Center | Protecting Your Accounts | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Capitalix security guidance – account security, online safety, fraud awareness, privacy, and secure banking practices to help protect your financial information.
+{% endblock %}
+
+{% block og_title %}Security Center | Protecting Your Accounts | Capitalix{% endblock %}
+
+{% block og_description %}
+    Capitalix security guidance – account security, online safety, fraud awareness, privacy, and secure banking practices to help protect your financial information.
+{% endblock %}
+
+{% block body_class %}security-page{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       SECURITY PAGE – EXTRA STYLES
+       ============================================================ */
+
+    .security-card .icon-badge {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .security-card h3 {
+        font-size: 1.1rem;
+        margin: 0 0 0.3rem;
+    }
+
+    .security-card p {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .security-info-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-sm);
+        margin-top: 1.5rem;
+    }
+
+    .security-info-card h3 {
+        font-size: 1.1rem;
+        margin: 0 0 0.4rem;
+    }
+
+    .security-info-card p {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .security-info-card .phone-number {
+        font-weight: 600;
+        color: var(--text);
+        font-size: 1.05rem;
+    }
+
+    .security-info-card .contact-link {
+        color: var(--accent);
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .security-info-card .contact-link:hover {
+        text-decoration: underline;
+    }
+
+    .security-info-card ul {
+        margin: 0.5rem 0 0 1.2rem;
+        padding: 0;
+        color: var(--text-muted);
+        font-size: 0.92rem;
+        line-height: 1.6;
+    }
+
+    .security-info-card ul li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 640px) {
+        .security-info-card {
+            padding: 1.25rem;
+        }
+
+        .security-card .icon-badge {
+            width: 40px;
+            height: 40px;
+        }
+
+        .security-card h3 {
+            font-size: 1rem;
+        }
+
+        .security-card p {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    :root[data-theme="dark"] .security-card .icon-badge {
+        background: var(--accent-soft);
+    }
+
+    :root[data-theme="dark"] .security-info-card {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="page-hero">
+    <div class="container">
+
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            Security
+        </p>
+
+        <h1 class="display" style="max-width:22ch;">
+            Your Security Matters
+        </h1>
+
+        <p class="lead" style="max-width:66ch;">
+            Practical guidance on protecting your accounts, recognising fraud attempts, and knowing
+            how Capitalix will and will not contact you.
+        </p>
+
+        <div class="btn-row" style="margin-top:1.75rem;">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="{% url 'contact' %}">
+                Contact Support
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     SECURITY GUIDANCE
+     ============================================================ -->
+<section class="section">
+    <div class="container">
+
+        <div class="section-head">
+            <p class="eyebrow">Security guidance</p>
+            <h2 class="display">Protect your accounts with confidence</h2>
+            <p class="lead">
+                Simple, practical steps you can take to keep your financial information safe.
+            </p>
+        </div>
+
+        <div class="grid grid--3">
+
+            <!-- Account Security -->
+            <article class="card card--hover reveal security-card">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="5" y="10.5" width="14" height="9.5" rx="2.2"/>
+                        <path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>
+                    </svg>
+                </span>
+                <h3>Account Security</h3>
+                <p>Use a strong, unique password for your Capitalix account. Enable every additional verification option available to you, and review your account activity regularly.</p>
+            </article>
+
+            <!-- Online Security -->
+            <article class="card card--hover reveal security-card">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="7" y="3" width="10" height="18" rx="2.5"/>
+                        <path d="M11 18.5h2"/>
+                    </svg>
+                </span>
+                <h3>Online Security</h3>
+                <p>Keep your devices and browsers updated, avoid signing in over untrusted public networks, and always sign out on shared devices.</p>
+            </article>
+
+            <!-- Fraud Awareness -->
+            <article class="card card--hover reveal security-card">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12Z"/>
+                        <circle cx="12" cy="12" r="2.6"/>
+                    </svg>
+                </span>
+                <h3>Fraud Awareness</h3>
+                <p>Be cautious with unexpected calls, texts, or emails asking for credentials or codes. Capitalix will never ask for your password or one‑time verification code.</p>
+            </article>
+
+            <!-- Privacy -->
+            <article class="card card--hover reveal security-card">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M12 3.5l7 2.8v5.2c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6.3l7-2.8Z"/>
+                        <path d="M9.2 12.2l2 2 3.6-3.9"/>
+                    </svg>
+                </span>
+                <h3>Privacy</h3>
+                <p>We are transparent about what information we collect and how we use it. Your data is handled with care and only used to serve your banking needs.</p>
+            </article>
+
+            <!-- Secure Banking Practices -->
+            <article class="card card--hover reveal security-card">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <circle cx="8.5" cy="14" r="3.5"/>
+                        <path d="M11 12l7-7 2 2-2 2 1.5 1.5-2 2L16 11l-2 2"/>
+                    </svg>
+                </span>
+                <h3>Secure Banking Practices</h3>
+                <p>Set up account alerts, review statements when they arrive, and report anything unfamiliar promptly. Staying informed is the best defence.</p>
+            </article>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     REPORTING A CONCERN
+     ============================================================ -->
+<section class="section section--alt">
+    <div class="container">
+
+        <div class="security-info-card" id="privacy">
+            <h3>Reporting a concern</h3>
+            <p>
+                If you believe your account information has been compromised, or if you notice any
+                suspicious activity, contact Capitalix immediately.
+            </p>
+            <p style="margin-top:0.5rem;">
+                <strong>Call our security team:</strong>
+                <span class="phone-number">1‑617‑785‑5366</span>
+            </p>
+            <p>
+                You can also reach us through our
+                <a href="{% url 'contact' %}" class="contact-link">contact page</a>
+                for secure messaging.
+            </p>
+        </div>
+
+        <!-- ============================================================
+             WHAT WE DO NOT CLAIM
+             ============================================================ -->
+        <div class="security-info-card" id="terms">
+            <h3>Our commitment to security</h3>
+            <p>
+                Capitalix takes the security of your financial information seriously. We use
+                industry‑standard safeguards to protect your data, and we continuously review our
+                practices to stay ahead of evolving threats.
+            </p>
+            <p style="margin-top:0.5rem;">
+                <strong>Key security practices:</strong>
+            </p>
+            <ul>
+                <li>Encrypted connections for all online banking sessions</li>
+                <li>Multi‑factor authentication for account access</li>
+                <li>Continuous fraud monitoring and alert systems</li>
+                <li>Regular security assessments and employee training</li>
+            </ul>
+            <p style="margin-top:0.75rem; font-size:0.85rem; color:var(--text-muted);">
+                For specific questions about our security practices or if you need to report a
+                security concern, please <a href="{% url 'contact' %}" style="color:var(--accent);">contact our team</a>.
+            </p>
+        </div>
+
+        <!-- ============================================================
+             ACCESSIBILITY
+             ============================================================ -->
+        <div class="security-info-card" id="accessibility">
+            <h3>Accessibility</h3>
+            <p>
+                Capitalix aims to keep this website usable with a keyboard, with screen readers, and at
+                a range of text sizes and contrast settings. We are committed to making our digital
+                services accessible to everyone.
+            </p>
+            <p style="margin-top:0.5rem;">
+                If you encounter a barrier while using this site, please
+                <a href="{% url 'contact' %}" style="color:var(--accent);">let us know</a>
+                so we can address it.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="section cta-band">
+    <div class="container">
+
+        <h2 class="display">Ready to Take the Next Step?</h2>
+
+        <p class="lead" style="margin:0 auto 1.75rem;">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    Manage your Capitalix operations from your staff dashboard.
+                {% else %}
+                    Access your accounts and review your security settings.
+                {% endif %}
+            {% else %}
+                Open an account and start banking with confidence.
+            {% endif %}
+        </p>
+
+        <div class="btn-row">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#main">
+                Back to Top
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

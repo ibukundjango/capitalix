@@ -1,0 +1,10 @@
+{% extends "emails/base_email.html" %}
+{% block title %}Debit Alert{% endblock %}
+{% block hero_title %}Transaction Alert{% endblock %}
+{% block content %}
+<h1>Debit Alert</h1>
+<p>Dear {{ user.first_name }},</p>
+<p>A transfer of <strong>${{ amount|floatformat:2 }}</strong> was made from your account {{ account_number }}.</p>
+<p>Reference: {{ reference }}</p>
+<p>If this transaction was not authorised by you, please contact support immediately.</p>
+{% endblock %}

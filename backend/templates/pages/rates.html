@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Rates | Deposit, Loan & Credit Card Rates | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View current Capitalix rates for deposit accounts, loans, and credit cards – including savings APY, certificates, mortgage, auto, and personal loan APR.
+{% endblock %}
+
+{% block og_title %}Rates | Deposit, Loan & Credit Card Rates | Capitalix{% endblock %}
+
+{% block og_description %}
+    View current Capitalix rates for deposit accounts, loans, and credit cards – including savings APY, certificates, mortgage, auto, and personal loan APR.
+{% endblock %}
+
+{% block body_class %}rates-page{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       RATES PAGE – TABLE ENHANCEMENTS
+       ============================================================ */
+
+    .rates-section-title {
+        font-family: var(--font-display);
+        font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+        margin: 2.5rem 0 1rem;
+        letter-spacing: -0.02em;
+    }
+
+    .rates-section-title:first-of-type {
+        margin-top: 0;
+    }
+
+    .rates-table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        -webkit-overflow-scrolling: touch;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .rates-table-wrap table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 480px;
+    }
+
+    .rates-table-wrap table caption {
+        text-align: left;
+        padding: 0.85rem 1.25rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+    }
+
+    .rates-table-wrap table thead th {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        font-weight: 700;
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .rates-table-wrap table tbody th {
+        font-weight: 600;
+        color: var(--text);
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .rates-table-wrap table tbody td {
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.92rem;
+        color: var(--text-muted);
+    }
+
+    .rates-table-wrap table tbody tr:last-child td,
+    .rates-table-wrap table tbody tr:last-child th {
+        border-bottom: 0;
+    }
+
+    .rates-table-wrap table td.num {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+        color: var(--accent);
+        font-size: 1rem;
+    }
+
+    .rates-table-wrap table td .rate-badge {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .rates-table-wrap table td .rate-badge--featured {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .scroll-hint {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin: 0.6rem 0 0;
+    }
+
+    /* Important notice card */
+    .rates-notice {
+        background: var(--surface);
+        border: 1px solid var(--accent);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .rates-notice .notice-icon {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        color: var(--accent);
+        margin-top: 0.1rem;
+    }
+
+    .rates-notice p {
+        margin: 0;
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+
+    .rates-notice p strong {
+        color: var(--text);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 640px) {
+        .rates-table-wrap table {
+            font-size: 0.85rem;
+            min-width: 400px;
+        }
+
+        .rates-table-wrap table th,
+        .rates-table-wrap table td {
+            padding: 0.6rem 0.8rem;
+        }
+
+        .rates-notice {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1rem;
+        }
+
+        .rates-notice .notice-icon {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    :root[data-theme="dark"] .rates-table-wrap {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .rates-table-wrap table thead th {
+        background: var(--surface-2);
+    }
+
+    :root[data-theme="dark"] .rates-notice {
+        background: var(--surface);
+        border-color: var(--accent);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="page-hero">
+    <div class="container">
+
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            Rates
+        </p>
+
+        <h1 class="display" style="max-width:22ch;">
+            Rates at a Glance
+        </h1>
+
+        <p class="lead" style="max-width:66ch;">
+            Deposit, loan, and card rates in one place. Current as of {% now "F j, Y" %}.
+        </p>
+
+        <div class="btn-row" style="margin-top:1.75rem;">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="{% url 'contact' %}">
+                Contact Us
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     RATES CONTENT
+     ============================================================ -->
+<section class="section">
+    <div class="container">
+
+        <!-- Notice -->
+        <div class="rates-notice">
+            <span class="notice-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </span>
+            <p>
+                <strong>Rates are subject to change.</strong>
+                All rates are current as of {% now "F j, Y" %} and may vary based on
+                creditworthiness, account type, and other factors.
+                <a href="{% url 'contact' %}" style="color:var(--accent);font-weight:500;">
+                    Contact our team
+                </a>
+                for a personalised quote.
+            </p>
+        </div>
+
+        <!-- ============================================================
+             DEPOSIT RATES
+             ============================================================ -->
+        <h2 class="rates-section-title">Deposit Rates</h2>
+
+        <div class="rates-table-wrap">
+            <table>
+                <caption>Deposit account rates – checking, savings, money market, and certificates</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Term</th>
+                        <th scope="col">Rate (APY)</th>
+                        <th scope="col">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Everyday Checking</th>
+                        <td>N/A</td>
+                        <td class="num">0.05%</td>
+                        <td>Variable rate, no monthly fees</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">High‑Yield Savings</th>
+                        <td>N/A</td>
+                        <td class="num">4.25%</td>
+                        <td><span class="rate-badge">Featured</span> Compounded daily</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Money Market</th>
+                        <td>Tiered</td>
+                        <td class="num">4.00%</td>
+                        <td>Based on balances over $10,000</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Certificate</th>
+                        <td>6 months</td>
+                        <td class="num">3.50%</td>
+                        <td>Fixed rate, guaranteed return</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Certificate</th>
+                        <td>18 months</td>
+                        <td class="num">4.50%</td>
+                        <td><span class="rate-badge rate-badge--featured">Best value</span> Featured term</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Certificate</th>
+                        <td>60 months</td>
+                        <td class="num">4.00%</td>
+                        <td>Long‑term fixed rate</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="scroll-hint">Scroll horizontally to see all columns.</p>
+
+        <!-- ============================================================
+             LOAN RATES
+             ============================================================ -->
+        <h2 class="rates-section-title">Loan Rates</h2>
+
+        <div class="rates-table-wrap">
+            <table>
+                <caption>Loan rates – personal, auto, mortgage, and home equity</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Term</th>
+                        <th scope="col">Rate (APR)</th>
+                        <th scope="col">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Personal Loan</th>
+                        <td>24–60 months</td>
+                        <td class="num">15.49%</td>
+                        <td>Fixed rate, no origination fees</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Auto Loan (new)</th>
+                        <td>Up to 72 months</td>
+                        <td class="num">6.29%</td>
+                        <td><span class="rate-badge">Low rate</span> Based on credit score</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Auto Loan (used)</th>
+                        <td>Up to 60 months</td>
+                        <td class="num">6.89%</td>
+                        <td>Based on vehicle age and credit</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Mortgage (30‑yr fixed)</th>
+                        <td>360 months</td>
+                        <td class="num">6.85%</td>
+                        <td>Fixed rate, terms available</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Home Equity</th>
+                        <td>Up to 180 months</td>
+                        <td class="num">8.15%</td>
+                        <td>Fixed rate, based on LTV</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="scroll-hint">Scroll horizontally to see all columns.</p>
+
+        <!-- ============================================================
+             CREDIT CARD RATES
+             ============================================================ -->
+        <h2 class="rates-section-title">Credit Card Rates</h2>
+
+        <div class="rates-table-wrap">
+            <table>
+                <caption>Credit card rates and APR information</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Purchase APR</th>
+                        <th scope="col">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Capitalix Everyday</th>
+                        <td>Variable</td>
+                        <td class="num">19.99%</td>
+                        <td>0% intro APR for 12 months</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Capitalix Rewards</th>
+                        <td>Variable</td>
+                        <td class="num">22.99%</td>
+                        <td><span class="rate-badge rate-badge--featured">Popular</span> 2% cash back</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Capitalix Business</th>
+                        <td>Variable</td>
+                        <td class="num">20.99%</td>
+                        <td>Employee cards included</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="scroll-hint">Scroll horizontally to see all columns.</p>
+
+        <!-- ============================================================
+             FINE PRINT
+             ============================================================ -->
+        <p class="fine-print" style="margin-top:2rem;">
+            <strong>Important rate information.</strong>
+            All rates are current as of {% now "F j, Y" %} and subject to change without notice.
+            APY = Annual Percentage Yield. APR = Annual Percentage Rate.
+            Rates require eligibility, credit approval, and may vary based on account type,
+            balance tier, and other factors. Fees may reduce earnings.
+            <a href="{% url 'contact' %}" style="color:var(--accent);">Contact us</a> for full terms and conditions.
+        </p>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="section cta-band">
+    <div class="container">
+
+        <h2 class="display">Ready to Take the Next Step?</h2>
+
+        <p class="lead" style="margin:0 auto 1.75rem;">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    Manage your Capitalix operations from your staff dashboard.
+                {% else %}
+                    Access your accounts and explore our full range of products.
+                {% endif %}
+            {% else %}
+                Open an account and start earning competitive rates today.
+            {% endif %}
+        </p>
+
+        <div class="btn-row">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#main">
+                Back to Top
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

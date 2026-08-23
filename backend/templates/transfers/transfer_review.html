@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Review Transfer | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Review and confirm your Capitalix transfer before sending.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .review-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 2rem;
+        align-items: start;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .review-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .review-card .form-header .eyebrow {
+        margin-bottom: 0.2rem;
+    }
+
+    .review-card .form-header h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .review-card .form-header .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 1.25rem;
+    }
+
+    .review-details {
+        background: var(--bg-alt);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .review-details .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .review-details .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .review-details .detail-row .label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .review-details .detail-row .value {
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: var(--text);
+        text-align: right;
+        word-break: break-word;
+    }
+
+    .review-details .detail-row .value.amount {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        color: var(--accent);
+    }
+
+    .review-card .field {
+        margin-bottom: 1.1rem;
+    }
+
+    .review-card .field label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    .review-card .field input {
+        width: 100%;
+        min-height: 50px;
+        padding: 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        letter-spacing: 0.08em;
+    }
+
+    .review-card .field input:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .review-card .field input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.6;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+    }
+
+    .review-card .field .error-text {
+        color: #c0392b;
+        font-size: 0.78rem;
+        margin: 0.25rem 0 0;
+        min-height: 1em;
+    }
+
+    .review-card .field .hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0.35rem 0 0;
+        line-height: 1.4;
+    }
+
+    .review-card .btn-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .review-card .btn-row .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .review-card .form-note {
+        margin-top: 1.25rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        border: 1px dashed var(--border-strong);
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+    }
+
+    .review-sidebar .card {
+        margin-bottom: 1rem;
+    }
+
+    .review-sidebar .card .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .review-sidebar .card h3 {
+        font-size: 1rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .review-sidebar .card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .review-sidebar .card ul {
+        margin: 0.5rem 0 0 1rem;
+        padding: 0;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    .review-sidebar .card ul li {
+        margin-bottom: 0.2rem;
+    }
+
+    @media (max-width: 860px) {
+        .review-grid {
+            grid-template-columns: 1fr;
+            max-width: 100%;
+        }
+
+        .review-card {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .review-card {
+            padding: 1.25rem;
+        }
+
+        .review-card .field input {
+            min-height: 44px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.9rem;
+        }
+
+        .review-card .btn-row {
+            flex-direction: column;
+        }
+
+        .review-card .btn-row .btn {
+            width: 100%;
+        }
+
+        .review-details {
+            padding: 1rem;
+        }
+
+        .review-details .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+        }
+
+        .review-details .detail-row .value {
+            text-align: left;
+            width: 100%;
+        }
+    }
+
+    :root[data-theme="dark"] .review-card {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .review-details {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .review-card .field input {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .review-card .field input:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="review-grid">
+
+            <!-- ============================================================
+                 REVIEW & CONFIRM
+                 ============================================================ -->
+            <div>
+                <div class="review-card">
+
+                    <div class="form-header">
+                        <p class="eyebrow">Review Transfer</p>
+                        <h1>Confirm Details</h1>
+                        <p class="sub">Please verify the transfer details below before confirming.</p>
+                    </div>
+
+                    <!-- Transfer Details -->
+                    <div class="review-details">
+
+                        <div class="detail-row">
+                            <span class="label">From Account</span>
+                            <span class="value">{{ from_account.get_account_type_display }} •••• {{ from_account.account_number|slice:"-4:" }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">Recipient</span>
+                            <span class="value">{{ recipient_name }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">Account Number</span>
+                            <span class="value">{{ recipient_account_number }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">Routing Number</span>
+                            <span class="value">{{ recipient_routing_number }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">Amount</span>
+                            <span class="value amount">${{ amount|floatformat:2 }}</span>
+                        </div>
+
+                        {% if reference %}
+                            <div class="detail-row">
+                                <span class="label">Reference</span>
+                                <span class="value">{{ reference }}</span>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- PIN Confirmation -->
+                    <form method="post" action="{% url 'transfer_review' %}">
+                        {% csrf_token %}
+
+                        <div class="field">
+                            <label for="{{ pin_form.transaction_pin.id_for_label }}">Enter Transaction PIN</label>
+                            {{ pin_form.transaction_pin }}
+                            {{ pin_form.transaction_pin.errors }}
+                            {% if pin_form.transaction_pin.help_text %}
+                                <p class="hint">{{ pin_form.transaction_pin.help_text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="btn-row">
+                            <button type="submit" class="btn btn--primary">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                                    <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                                Confirm &amp; Send
+                            </button>
+                            <a href="{% url 'transfer' %}" class="btn btn--outline">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                                Cancel
+                            </a>
+                        </div>
+
+                        <p class="form-note">
+                            <strong>By confirming, you authorise this transfer.</strong>
+                            Please ensure all details are correct before proceeding.
+                        </p>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- ============================================================
+                 SIDEBAR – revised to be neutral and factual
+             ============================================================ -->
+            <div class="review-sidebar">
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M12 3.5l7 2.8v5.2c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6.3l7-2.8Z"/>
+                            <path d="M9.2 12.2l2 2 3.6-3.9"/>
+                        </svg>
+                    </div>
+                    <h3>Security & Privacy</h3>
+                    <ul>
+                        <li>PIN verification is required</li>
+                        <li>Transfers are processed securely</li>
+                        <li>Confirmation email will be sent</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <circle cx="12" cy="12" r="8.5"/>
+                            <path d="M12 7.5V12l3.2 2"/>
+                        </svg>
+                    </div>
+                    <h3>Transfer Summary</h3>
+                    <ul>
+                        <li>Processing time: <strong>1‑2 business days</strong></li>
+                        <li>Fee: <strong>$0.00</strong></li>
+                        <li>Reference: {% if reference %}{{ reference }}{% else %}N/A{% endif %}</li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

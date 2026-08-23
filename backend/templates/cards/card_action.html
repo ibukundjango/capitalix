@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cards | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View and manage your Capitalix credit and debit cards.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .cards-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .cards-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .cards-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .cards-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .cards-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .cards-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .cards-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* Card display */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+    }
+
+    .card-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-item:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+    .card-item .card-mock {
+        aspect-ratio: 1.586 / 1;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        min-height: 140px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-item .card-mock::after {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        right: -80px;
+        top: -100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.07);
+        pointer-events: none;
+    }
+
+    .card-item .card-mock > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .card-item .card-mock .card-brand {
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        letter-spacing: -0.02em;
+        font-weight: 400;
+    }
+
+    .card-item .card-mock .card-number {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.12em;
+        font-size: 0.9rem;
+        margin: 0.3rem 0 0.2rem;
+    }
+
+    .card-item .card-mock .card-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.85;
+    }
+
+    .card-item .card-mock .card-chip {
+        width: 28px;
+        height: 20px;
+        border-radius: 5px;
+        background: linear-gradient(135deg, #e6d08a, #b8912f);
+        flex-shrink: 0;
+    }
+
+    .card-item .card-mock--everyday {
+        background: linear-gradient(140deg, #0e2c55, #061428);
+    }
+
+    .card-item .card-mock--rewards {
+        background: linear-gradient(140deg, #1f6feb, #0a2140);
+    }
+
+    .card-item .card-mock--business {
+        background: linear-gradient(140deg, #123f31, #061428);
+    }
+
+    .card-item .card-mock--debit {
+        background: linear-gradient(140deg, #2c3e50, #1a252f);
+    }
+
+    .card-item .card-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        flex: 1;
+    }
+
+    .card-item .card-info .card-type {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .card-item .card-info .card-expiry {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .card-item .card-info .card-status {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.7rem;
+        font-weight: 600;
+        width: fit-content;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .card-item .card-info .card-status--active {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .card-item .card-info .card-status--inactive {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .card-item .card-info .card-status--blocked {
+        background: rgba(239, 68, 68, 0.12);
+        color: #b91c1c;
+    }
+
+    .card-item .card-actions {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .card-item .card-actions .btn {
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+        grid-column: 1 / -1;
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .cards-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .cards-header .header-actions {
+            justify-content: stretch;
+        }
+
+        .cards-header .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .card-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    :root[data-theme="dark"] .card-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .card-item .card-info .card-status--inactive {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    :root[data-theme="dark"] .card-item .card-info .card-status--blocked {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="cards-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Cards</span>
+                </p>
+                <h1>Your Cards</h1>
+                <p class="sub">View and manage your Capitalix credit and debit cards.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'card_request' %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Request New Card
+                </a>
+            </div>
+
+        </div>
+
+        <div class="card-grid">
+
+            {% if cards %}
+                {% for card in cards %}
+                    <div class="card-item">
+
+                        <!-- Card Mockup -->
+                        <div class="card-mock
+                            {% if card.card_type == 'CREDIT' %}card-mock--rewards
+                            {% elif card.card_type == 'BUSINESS' %}card-mock--business
+                            {% elif card.card_type == 'DEBIT' %}card-mock--debit
+                            {% else %}card-mock--everyday{% endif %}">
+
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <span class="card-brand">Capitalix</span>
+                                <span class="card-chip" aria-hidden="true"></span>
+                            </div>
+
+                            <p class="card-number" style="margin:0.3rem 0 0.2rem;">
+                                •••• •••• •••• {{ card.last_four }}
+                            </p>
+
+                            <div class="card-footer">
+                                <span>Card Holder</span>
+                                <span>{{ card.get_card_type_display }}</span>
+                            </div>
+
+                        </div>
+
+                        <!-- Card Info -->
+                        <div class="card-info">
+                            <span class="card-type">{{ card.get_card_type_display }}</span>
+                            <span class="card-expiry">Expires: {{ card.expiration_date|date:"m/y" }}</span>
+                            <span class="card-status
+                                {% if card.status == 'ACTIVE' %}card-status--active
+                                {% elif card.status == 'INACTIVE' %}card-status--inactive
+                                {% elif card.status == 'BLOCKED' %}card-status--blocked{% endif %}">
+                                {{ card.get_status_display }}
+                            </span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="card-actions">
+                            <a href="{% url 'card_action' card.id %}" class="btn btn--outline btn--sm">Manage</a>
+                            <button class="btn btn--outline btn--sm" disabled style="opacity:0.5; cursor:not-allowed;">
+                                Freeze
+                            </button>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon" aria-hidden="true">💳</div>
+                    <h3>No cards yet</h3>
+                    <p>You don't have any cards associated with your account.</p>
+                    <a href="{% url 'card_request' %}" class="btn btn--primary">Request Your First Card</a>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="form-note" style="margin-top:2rem; padding:1rem 1.25rem;">
+            <strong>Coming soon:</strong> Freeze/unfreeze cards, manage spending limits, and request card replacements – all from one place.
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

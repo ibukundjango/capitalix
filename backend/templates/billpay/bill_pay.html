@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Bill Pay | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Schedule and manage bill payments from your Capitalix account.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .bill-pay-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .form-card .field {
+        margin-bottom: 1.1rem;
+    }
+
+    .form-card .field label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    .form-card .field input,
+    .form-card .field select,
+    .form-card .field textarea {
+        width: 100%;
+        min-height: 50px;
+        padding: 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .form-card .field input:focus,
+    .form-card .field select:focus,
+    .form-card .field textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .form-card .field input::placeholder,
+    .form-card .field textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 0.6;
+        font-weight: 400;
+    }
+
+    .form-card .field select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.8rem;
+    }
+
+    .form-card .field .hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0.35rem 0 0;
+        line-height: 1.4;
+    }
+
+    .form-card .field .error-text {
+        color: #c0392b;
+        font-size: 0.78rem;
+        margin: 0.25rem 0 0;
+        min-height: 1em;
+    }
+
+    .bill-pay-sidebar .card {
+        margin-bottom: 1rem;
+    }
+
+    .bill-pay-sidebar .card .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .bill-pay-sidebar .card h3 {
+        font-size: 1rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .bill-pay-sidebar .card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 860px) {
+        .bill-pay-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .form-card .field input,
+        .form-card .field select,
+        .form-card .field textarea {
+            min-height: 44px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    :root[data-theme="dark"] .form-card .field input,
+    :root[data-theme="dark"] .form-card .field select,
+    :root[data-theme="dark"] .form-card .field textarea {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .form-card .field input:focus,
+    :root[data-theme="dark"] .form-card .field select:focus,
+    :root[data-theme="dark"] .form-card .field textarea:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="container">
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            &nbsp;/&nbsp;
+            Bill Pay
+        </p>
+        <h1 class="display" style="max-width:22ch;">Pay a Bill</h1>
+        <p class="lead">Schedule one‑time or recurring payments from your Capitalix account.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <div class="bill-pay-grid">
+
+            <!-- Main Form -->
+            <div>
+                <form class="form-card" method="post" action="{% url 'bill_pay' %}" novalidate>
+                    {% csrf_token %}
+
+                    <p class="eyebrow" style="margin-bottom:.2rem;">Schedule Payment</p>
+                    <h2 style="font-size:1.2rem; margin:0 0 0.4rem;">Payment Details</h2>
+                    <p class="muted small" style="margin:0 0 1.25rem;">Select a payee, enter the amount, and choose when to pay.</p>
+
+                    {% if form.non_field_errors %}
+                        <div class="error-text" role="alert" style="margin-bottom:1rem;">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="field">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="hint">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="error-text" role="alert">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button class="btn btn--primary btn--block" type="submit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                            <rect x="3" y="7" width="18" height="12" rx="2"/>
+                            <path d="M3 11h18"/>
+                        </svg>
+                        Schedule Payment
+                    </button>
+
+                    <p class="form-note" style="margin-top:1.25rem;">
+                        <strong>Note:</strong> Bill pay functionality is coming soon. This form is a preview of the payment scheduling interface.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="bill-pay-sidebar">
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <circle cx="12" cy="12" r="8.5"/>
+                            <path d="M12 7.5V12l3.2 2"/>
+                        </svg>
+                    </div>
+                    <h3>Manage Payees</h3>
+                    <p>Add, edit, or remove your payees from one place.</p>
+                    <a href="{% url 'payee_list' %}" class="link-arrow" style="margin-top:0.5rem; display:inline-flex;">
+                        Manage Payees
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M5 12h13"/><path d="M13 6.5 18.5 12 13 17.5"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M6.5 10a5.5 5.5 0 0 1 11 0c0 4 1.5 5.5 1.5 5.5H5S6.5 14 6.5 10Z"/>
+                            <path d="M10 18.5a2.2 2.2 0 0 0 4 0"/>
+                        </svg>
+                    </div>
+                    <h3>Payment History</h3>
+                    <p>View past and upcoming scheduled payments.</p>
+                    <a href="{% url 'bill_payment_history' %}" class="link-arrow" style="margin-top:0.5rem; display:inline-flex;">
+                        View History
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M5 12h13"/><path d="M13 6.5 18.5 12 13 17.5"/>
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

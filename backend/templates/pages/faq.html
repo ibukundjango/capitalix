@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}FAQ | Accounts, Loans, Digital Banking & Security | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Answers to common Capitalix questions about opening accounts, deposit products, loan applications, online banking access, and account security.
+{% endblock %}
+
+{% block og_title %}FAQ | Accounts, Loans, Digital Banking & Security | Capitalix{% endblock %}
+
+{% block og_description %}
+    Answers to common Capitalix questions about opening accounts, deposit products, loan applications, online banking access, and account security.
+{% endblock %}
+
+{% block body_class %}faq-page{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="page-hero">
+    <div class="container">
+
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            FAQ
+        </p>
+
+        <h1 class="display" style="max-width:22ch;">
+            Frequently Asked Questions
+        </h1>
+
+        <p class="lead" style="max-width:66ch;">
+            Answers about accounts, loans, digital banking, and security. If you don't find what you
+            need, our team is a message away.
+        </p>
+
+        <div class="btn-row" style="margin-top:1.75rem;">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="{% url 'contact' %}">
+                Contact Us
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     FAQ ACCORDIONS
+     ============================================================ -->
+<section class="section">
+    <div class="container" style="max-width:900px;">
+
+        <!-- ============================================================
+             GENERAL BANKING
+             ============================================================ -->
+        <h2 class="display" style="font-size:clamp(1.4rem,2.4vw,1.9rem);margin-top:2.5rem;">
+            General Banking
+        </h2>
+
+        <div class="accordion">
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t1" aria-expanded="false"
+                            aria-controls="faq-p1">
+                        <span>What is Capitalix?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p1" role="region" aria-labelledby="faq-t1" hidden>
+                    <p style="margin:0;">
+                        Capitalix is a modern financial services brand offering deposit accounts,
+                        credit cards, loans, business banking, and financial planning resources –
+                        all backed by digital tools and genuine personal support.
+                    </p>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t2" aria-expanded="false"
+                            aria-controls="faq-p2">
+                        <span>How do I open an account?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p2" role="region" aria-labelledby="faq-t2" hidden>
+                    <p style="margin:0;">
+                        Choose an account type on our Open an Account page and complete the
+                        application form. A member of our team will review your application and
+                        reach out to help you get started.
+                    </p>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t3" aria-expanded="false"
+                            aria-controls="faq-p3">
+                        <span>What accounts does Capitalix offer?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p3" role="region" aria-labelledby="faq-t3" hidden>
+                    <p style="margin:0;">
+                        We offer checking, savings, money market, and certificate accounts for
+                        personal customers, plus business checking, business savings, and
+                        business lending products for companies of all sizes.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             ACCOUNTS
+             ============================================================ -->
+        <h2 class="display" style="font-size:clamp(1.4rem,2.4vw,1.9rem);margin-top:2.5rem;">
+            Accounts
+        </h2>
+
+        <div class="accordion">
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t4" aria-expanded="false"
+                            aria-controls="faq-p4">
+                        <span>What checking accounts are available?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p4" role="region" aria-labelledby="faq-t4" hidden>
+                    <p style="margin:0;">
+                        We offer everyday checking accounts designed for daily transactions,
+                        with digital access, no minimum balance requirements, and straightforward
+                        terms. Business checking is also available for companies.
+                    </p>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t5" aria-expanded="false"
+                            aria-controls="faq-p5">
+                        <span>How do savings accounts work?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p5" role="region" aria-labelledby="faq-t5" hidden>
+                    <p style="margin:0;">
+                        You deposit funds, your balance earns interest at the applicable rate,
+                        and you can access your money subject to product terms. All rates are
+                        current as of {% now "F j, Y" %} and subject to change.
+                    </p>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t6" aria-expanded="false"
+                            aria-controls="faq-p6">
+                        <span>Are there minimum balance requirements?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p6" role="region" aria-labelledby="faq-t6" hidden>
+                    <p style="margin:0;">
+                        Our everyday checking account has no minimum balance requirement.
+                        Savings and certificate accounts may have minimums depending on the
+                        product. <a href="{% url 'contact' %}" style="color:var(--accent);">Contact us</a> for full details.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             LOANS
+             ============================================================ -->
+        <h2 class="display" style="font-size:clamp(1.4rem,2.4vw,1.9rem);margin-top:2.5rem;">
+            Loans
+        </h2>
+
+        <div class="accordion">
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t7" aria-expanded="false"
+                            aria-controls="faq-p7">
+                        <span>How do I apply for a loan?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p7" role="region" aria-labelledby="faq-t7" hidden>
+                    <p style="margin:0;">
+                        Review our loan products, estimate your payment with our calculator,
+                        then <a href="{% url 'contact' %}" style="color:var(--accent);">contact our team</a>.
+                        A loan specialist will walk you through the application process and
+                        help you find the right solution for your needs.
+                    </p>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t8" aria-expanded="false"
+                            aria-controls="faq-p8">
+                        <span>What loan products are available?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p8" role="region" aria-labelledby="faq-t8" hidden>
+                    <p style="margin:0;">
+                        We offer personal loans, auto loans, home loans, home equity financing,
+                        and business loans. Each product has transparent terms and competitive
+                        rates designed to fit your financial situation.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             DIGITAL BANKING
+             ============================================================ -->
+        <h2 class="display" style="font-size:clamp(1.4rem,2.4vw,1.9rem);margin-top:2.5rem;">
+            Digital Banking
+        </h2>
+
+        <div class="accordion">
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t9" aria-expanded="false"
+                            aria-controls="faq-p9">
+                        <span>How do I access online banking?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p9" role="region" aria-labelledby="faq-t9" hidden>
+                    <p style="margin:0;">
+                        Use the Login link in the header to access your account. Once logged in,
+                        you can view balances, review transactions, transfer funds, and manage
+                        your banking preferences.
+                    </p>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t10" aria-expanded="false"
+                            aria-controls="faq-p10">
+                        <span>Is mobile banking available?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p10" role="region" aria-labelledby="faq-t10" hidden>
+                    <p style="margin:0;">
+                        Yes. Our mobile banking experience gives you full access to your
+                        accounts from your smartphone or tablet, with the same features as
+                        online banking – all optimised for your device.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             SECURITY
+             ============================================================ -->
+        <h2 class="display" style="font-size:clamp(1.4rem,2.4vw,1.9rem);margin-top:2.5rem;">
+            Security
+        </h2>
+
+        <div class="accordion">
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t11" aria-expanded="false"
+                            aria-controls="faq-p11">
+                        <span>How does Capitalix protect my information?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p11" role="region" aria-labelledby="faq-t11" hidden>
+                    <p style="margin:0;">
+                        We use industry‑standard encryption, secure authentication, and
+                        continuous monitoring to protect your accounts. Visit our
+                        <a href="{% url 'security' %}" style="color:var(--accent);">Security Center</a>
+                        for more information on how we keep your data safe.
+                    </p>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <h3 style="margin:0;">
+                    <button class="acc-trigger" type="button" id="faq-t12" aria-expanded="false"
+                            aria-controls="faq-p12">
+                        <span>What should I do if I suspect fraud?</span>
+                        <span class="chev">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M6 9.5l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h3>
+                <div class="acc-panel" id="faq-p12" role="region" aria-labelledby="faq-t12" hidden>
+                    <p style="margin:0;">
+                        Contact Capitalix immediately at <strong>1‑617-785-5366</strong> and
+                        review your recent account activity. Never share your passwords,
+                        verification codes, or PIN with anyone. Our team is here to help
+                        secure your account.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             STILL HAVE QUESTIONS?
+             ============================================================ -->
+        <div class="card" style="margin-top:3rem;text-align:center;padding:2.5rem 2rem;">
+            <p class="eyebrow">Still have questions?</p>
+            <h3 style="font-size:1.3rem;margin:0.25rem 0 0.5rem;">We're here to help</h3>
+            <p class="muted" style="margin:0 0 1.25rem;">
+                Didn't find what you were looking for? Our support team is ready to assist.
+            </p>
+            <a href="{% url 'contact' %}" class="btn btn--primary">
+                Contact Us
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="section cta-band">
+    <div class="container">
+
+        <h2 class="display">Ready to Take the Next Step?</h2>
+
+        <p class="lead" style="margin:0 auto 1.75rem;">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    Manage your Capitalix operations from your staff dashboard.
+                {% else %}
+                    Access your accounts and manage your finances online.
+                {% endif %}
+            {% else %}
+                Open an account and experience a simpler way to manage your money.
+            {% endif %}
+        </p>
+
+        <div class="btn-row">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#main">
+                Back to Top
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

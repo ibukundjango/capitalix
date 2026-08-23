@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Staff Dashboard | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Capitalix staff dashboard – monitor customers, accounts, transactions, and system activity.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .staff-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .staff-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .staff-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .staff-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .staff-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .staff-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .staff-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* Stats cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        text-align: center;
+    }
+
+    .stat-card:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+    .stat-card .label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 0 0 0.2rem;
+    }
+
+    .stat-card .value {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 3vw, 2.6rem);
+        font-variant-numeric: tabular-nums;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .stat-card .trend {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    /* Tables */
+    .section-title {
+        font-family: var(--font-display);
+        font-size: clamp(1.3rem, 2vw, 1.6rem);
+        margin: 0 0 1rem;
+        letter-spacing: -0.02em;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 2rem;
+    }
+
+    .table-wrap table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 480px;
+    }
+
+    .table-wrap table thead th {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        font-weight: 700;
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table-wrap table tbody td {
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+        color: var(--text);
+    }
+
+    .table-wrap table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .table-wrap table tbody tr:hover td {
+        background: var(--accent-soft);
+    }
+
+    .table-wrap table tbody td .mono {
+        font-family: var(--font-display);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .table-wrap table tbody td .amount-positive {
+        color: var(--positive);
+        font-weight: 600;
+    }
+
+    .empty-state-table {
+        text-align: center;
+        padding: 2rem 1.5rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+        .staff-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.6rem;
+        }
+
+        .table-wrap table {
+            font-size: 0.85rem;
+            min-width: 400px;
+        }
+
+        .table-wrap table th,
+        .table-wrap table td {
+            padding: 0.6rem 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    :root[data-theme="dark"] .stat-card {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .table-wrap {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .table-wrap table thead th {
+        background: var(--surface-2);
+    }
+
+    :root[data-theme="dark"] .table-wrap table tbody tr:hover td {
+        background: var(--accent-soft);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="staff-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Staff Dashboard</span>
+                </p>
+                <h1>Staff Dashboard</h1>
+                <p class="sub">Monitor customers, accounts, transactions, and system activity.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'dashboard' %}" class="btn btn--outline btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Back to Dashboard
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn--outline btn--sm">
+                    Sign Out
+                </a>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             STATS
+             ============================================================ -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <p class="label">Customers</p>
+                <p class="value">{{ total_customers|default:"0" }}</p>
+                <p class="trend">Total registered users</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="label">Accounts</p>
+                <p class="value">{{ total_accounts|default:"0" }}</p>
+                <p class="trend">Active accounts</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="label">Transactions</p>
+                <p class="value">{{ total_transactions|default:"0" }}</p>
+                <p class="trend">All time</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="label">Pending Loans</p>
+                <p class="value">{{ pending_loans|default:"0" }}</p>
+                <p class="trend">Awaiting review</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="label">Open Tickets</p>
+                <p class="value">{{ open_tickets|default:"0" }}</p>
+                <p class="trend">Support requests</p>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             RECENT AUDIT LOGS
+             ============================================================ -->
+        <h2 class="section-title">Recent Audit Logs</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Actor</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Target</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in recent_audit_logs %}
+                        <tr>
+                            <td>{{ log.actor }}</td>
+                            <td>{{ log.action }}</td>
+                            <td>{{ log.target }}</td>
+                            <td class="mono">{{ log.timestamp|date:"M d, Y H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-state-table">No audit logs available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ============================================================
+             RECENT TRANSACTIONS
+             ============================================================ -->
+        <h2 class="section-title">Recent Transactions</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Account</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in recent_transactions %}
+                        <tr>
+                            <td class="mono">{{ tx.account.account_number }}</td>
+                            <td>{{ tx.get_transaction_type_display }}</td>
+                            <td class="amount-positive">${{ tx.amount|floatformat:2 }}</td>
+                            <td class="mono">{{ tx.created_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-state-table">No transactions available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ============================================================
+             FOOTER
+             ============================================================ -->
+        <div class="form-note" style="margin-top:1rem; padding:1rem 1.25rem;">
+            <strong>Staff access only.</strong> This dashboard is restricted to Capitalix staff members.
+            All actions are logged for audit purposes.
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "emails/base_email.html" %}
+{% block title %}Card Alert{% endblock %}
+{% block hero_title %}Card Notification{% endblock %}
+{% block content %}
+<h1>Card Alert</h1>
+<p>Dear {{ user.first_name }},</p>
+<p>Your card (****{{ last_four }}) has been {{ action }}.</p>
+{% endblock %}

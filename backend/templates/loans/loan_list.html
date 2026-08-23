@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Loans | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View and manage your Capitalix loans – track balances, payments, and application status.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .loans-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .loans-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .loans-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .loans-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .loans-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .loans-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .loans-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .loan-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .loan-item:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    .loan-item .loan-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .loan-item .loan-info .loan-type {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--text);
+    }
+
+    .loan-item .loan-info .loan-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .loan-item .loan-info .loan-meta span {
+        margin-right: 0.5rem;
+    }
+
+    .loan-item .loan-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.2rem;
+        text-align: right;
+    }
+
+    .loan-item .loan-right .amount {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .loan-item .loan-right .term {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .loan-item .loan-right .status-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .loan-item .loan-right .status-badge--approved {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .loan-item .loan-right .status-badge--pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .loan-item .loan-right .status-badge--rejected {
+        background: rgba(239, 68, 68, 0.12);
+        color: #b91c1c;
+    }
+
+    .loan-item .loan-right .status-badge--funded {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .loans-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .loans-header .header-actions {
+            justify-content: stretch;
+        }
+
+        .loans-header .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .loan-item {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 1.25rem 1rem;
+        }
+
+        .loan-item .loan-right {
+            align-items: center;
+            text-align: center;
+        }
+    }
+
+    :root[data-theme="dark"] .loan-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .loan-item .loan-right .status-badge--pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    :root[data-theme="dark"] .loan-item .loan-right .status-badge--rejected {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="loans-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">My Loans</span>
+                </p>
+                <h1>My Loans</h1>
+                <p class="sub">View and manage all your Capitalix loans.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'loan_apply' %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Apply for a Loan
+                </a>
+            </div>
+
+        </div>
+
+        {% if loans %}
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                {% for loan in loans %}
+                    <div class="loan-item">
+
+                        <div class="loan-info">
+                            <span class="loan-type">{{ loan.get_loan_type_display }}</span>
+                            <span class="loan-meta">
+                                <span>📅 Applied: {{ loan.created_at|date:"M d, Y" }}</span>
+                                <span>📋 {{ loan.get_status_display }}</span>
+                            </span>
+                        </div>
+
+                        <div class="loan-right">
+                            <span class="amount">${{ loan.amount|floatformat:2 }}</span>
+                            <span class="term">{{ loan.term_months }} months</span>
+                            {% if loan.status == 'APPROVED' or loan.status == 'FUNDED' %}
+                                <span class="status-badge status-badge--approved">{{ loan.get_status_display }}</span>
+                            {% elif loan.status == 'PENDING' %}
+                                <span class="status-badge status-badge--pending">{{ loan.get_status_display }}</span>
+                            {% elif loan.status == 'REJECTED' %}
+                                <span class="status-badge status-badge--rejected">{{ loan.get_status_display }}</span>
+                            {% else %}
+                                <span class="status-badge">{{ loan.get_status_display }}</span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon" aria-hidden="true">📋</div>
+                <h3>No loans yet</h3>
+                <p>You haven't applied for any loans. Get started by applying for the financing that fits your needs.</p>
+                <a href="{% url 'loan_apply' %}" class="btn btn--primary">Apply for a Loan</a>
+            </div>
+        {% endif %}
+
+        <div class="form-note" style="margin-top:2rem; padding:1rem 1.25rem;">
+            <strong>Coming soon:</strong> Loan payment management, balance tracking, and payment history – all in one place.
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

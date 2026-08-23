@@ -1,0 +1,636 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Credit Cards | Everyday, Rewards & Business Cards | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Compare Capitalix credit card options – Everyday, Rewards, and Business cards with clear terms, competitive APRs, and benefits designed for your spending style.
+{% endblock %}
+
+{% block og_title %}Credit Cards | Everyday, Rewards & Business Cards | Capitalix{% endblock %}
+
+{% block og_description %}
+    Compare Capitalix credit card options – Everyday, Rewards, and Business cards with clear terms, competitive APRs, and benefits designed for your spending style.
+{% endblock %}
+
+{% block body_class %}credit-cards-page{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       CREDIT CARDS PAGE – EXTRA STYLES
+       ============================================================ */
+
+    .cc-mock {
+        aspect-ratio: 1.586 / 1;
+        border-radius: 18px;
+        padding: 1.4rem 1.5rem;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        min-height: 170px;
+    }
+
+    .cc-mock::after {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        right: -120px;
+        top: -140px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        pointer-events: none;
+    }
+
+    .cc-mock .cc-brand {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        letter-spacing: -0.02em;
+        font-weight: 400;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cc-mock .cc-chip {
+        width: 32px;
+        height: 22px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #e6d08a, #b8912f);
+        flex-shrink: 0;
+    }
+
+    .cc-mock .cc-number {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.14em;
+        font-size: 0.95rem;
+        position: relative;
+        z-index: 1;
+        margin: 0.4rem 0 0.2rem;
+    }
+
+    .cc-mock .cc-foot {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.85;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cc--everyday {
+        background: linear-gradient(140deg, #0e2c55, #061428);
+    }
+
+    .cc--rewards {
+        background: linear-gradient(140deg, #1f6feb, #0a2140);
+    }
+
+    .cc--business {
+        background: linear-gradient(140deg, #123f31, #061428);
+    }
+
+    /* Card detail lists */
+    .card-detail-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem 1rem;
+        margin: 1rem 0 0;
+        padding: 0;
+        list-style: none;
+        font-size: 0.88rem;
+        color: var(--text-muted);
+    }
+
+    .card-detail-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.2rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .card-detail-list li .label {
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .card-detail-list li .value {
+        font-weight: 500;
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Comparison table */
+    .compare-table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        -webkit-overflow-scrolling: touch;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .compare-table-wrap table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 480px;
+    }
+
+    .compare-table-wrap table th,
+    .compare-table-wrap table td {
+        padding: 0.85rem 1.25rem;
+        text-align: left;
+        font-size: 0.9rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .compare-table-wrap table thead th {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        font-weight: 700;
+    }
+
+    .compare-table-wrap table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .compare-table-wrap table td.num {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+    }
+
+    .compare-table-wrap table td .check-mark {
+        color: var(--positive);
+        font-weight: 700;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 860px) {
+        .card-detail-list {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .cc-mock {
+            padding: 1rem;
+            min-height: 140px;
+            border-radius: 14px;
+        }
+
+        .cc-mock .cc-brand {
+            font-size: 0.95rem;
+        }
+
+        .cc-mock .cc-number {
+            font-size: 0.8rem;
+        }
+
+        .cc-mock .cc-foot {
+            font-size: 0.6rem;
+        }
+
+        .compare-table-wrap table {
+            font-size: 0.85rem;
+        }
+
+        .compare-table-wrap table th,
+        .compare-table-wrap table td {
+            padding: 0.6rem 0.8rem;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    :root[data-theme="dark"] .compare-table-wrap {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .compare-table-wrap table thead th {
+        background: var(--surface-2);
+    }
+
+    :root[data-theme="dark"] .card-detail-list li {
+        border-bottom-color: var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="page-hero">
+    <div class="container">
+
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            Credit Cards
+        </p>
+
+        <h1 class="display" style="max-width:22ch;">
+            A Card That Fits the Way You Spend
+        </h1>
+
+        <p class="lead" style="max-width:66ch;">
+            Three Capitalix card options – Everyday, Rewards, and Business – with transparent
+            terms so you can compare them side by side and choose what works for you.
+        </p>
+
+        <div class="btn-row" style="margin-top:1.75rem;">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#compare">
+                Compare Cards
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CARD OPTIONS
+     ============================================================ -->
+<section class="section">
+    <div class="container">
+
+        <div class="grid grid--3">
+
+            <!-- Everyday Card -->
+            <article class="card card--hover reveal">
+
+                <div class="cc-mock cc--everyday">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;">
+                        <span class="cc-brand">Capitalix</span>
+                        <span class="cc-chip" aria-hidden="true"></span>
+                    </div>
+                    <p class="cc-number" style="margin:0;">•••• •••• •••• 0000</p>
+                    <div class="cc-foot">
+                        <span>Card Holder</span>
+                        <span>Everyday</span>
+                    </div>
+                </div>
+
+                <h3 style="margin-top:1.25rem;">Capitalix Everyday</h3>
+                <p>Simple, straightforward terms for your daily purchases.</p>
+
+                <ul class="check-list" style="margin:0.5rem 0 0;">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Predictable terms with no hidden fees</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Full digital card controls</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Contactless payments &amp; mobile wallet</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Fraud monitoring and alerts</span>
+                    </li>
+                </ul>
+
+                <ul class="card-detail-list">
+                    <li><span class="label">Annual fee</span><span class="value">$0</span></li>
+                    <li><span class="label">Purchase APR</span><span class="value">19.99%</span></li>
+                    <li><span class="label">Rewards</span><span class="value">1% cash back</span></li>
+                    <li><span class="label">Intro offer</span><span class="value">0% APR for 12 months</span></li>
+                </ul>
+
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    {% if not user.is_authenticated %}
+                        <a class="btn btn--primary btn--sm" href="{% url 'open_account_public' %}">
+                            Apply Now
+                        </a>
+                    {% else %}
+                        <a class="btn btn--primary btn--sm" href="{% url 'dashboard' %}">
+                            Dashboard
+                        </a>
+                    {% endif %}
+                    <a class="btn btn--outline btn--sm" href="#compare">Compare Cards</a>
+                </div>
+
+            </article>
+
+            <!-- Rewards Card -->
+            <article class="card card--hover reveal">
+
+                <div class="cc-mock cc--rewards">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;">
+                        <span class="cc-brand">Capitalix</span>
+                        <span class="cc-chip" aria-hidden="true"></span>
+                    </div>
+                    <p class="cc-number" style="margin:0;">•••• •••• •••• 0000</p>
+                    <div class="cc-foot">
+                        <span>Card Holder</span>
+                        <span>Rewards</span>
+                    </div>
+                </div>
+
+                <h3 style="margin-top:1.25rem;">Capitalix Rewards</h3>
+                <p>Earn more on the things you buy most.</p>
+
+                <ul class="check-list" style="margin:0.5rem 0 0;">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>2% cash back on groceries &amp; dining</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>1.5% on all other purchases</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Travel and purchase protections</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Fraud monitoring &amp; alerts</span>
+                    </li>
+                </ul>
+
+                <ul class="card-detail-list">
+                    <li><span class="label">Annual fee</span><span class="value">$45</span></li>
+                    <li><span class="label">Purchase APR</span><span class="value">22.99%</span></li>
+                    <li><span class="label">Rewards</span><span class="value">Up to 2% cash back</span></li>
+                    <li><span class="label">Intro offer</span><span class="value">$150 bonus after spending $1,000</span></li>
+                </ul>
+
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    {% if not user.is_authenticated %}
+                        <a class="btn btn--primary btn--sm" href="{% url 'open_account_public' %}">
+                            Apply Now
+                        </a>
+                    {% else %}
+                        <a class="btn btn--primary btn--sm" href="{% url 'dashboard' %}">
+                            Dashboard
+                        </a>
+                    {% endif %}
+                    <a class="btn btn--outline btn--sm" href="#compare">Compare Cards</a>
+                </div>
+
+            </article>
+
+            <!-- Business Card -->
+            <article class="card card--hover reveal">
+
+                <div class="cc-mock cc--business">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;">
+                        <span class="cc-brand">Capitalix</span>
+                        <span class="cc-chip" aria-hidden="true"></span>
+                    </div>
+                    <p class="cc-number" style="margin:0;">•••• •••• •••• 0000</p>
+                    <div class="cc-foot">
+                        <span>Card Holder</span>
+                        <span>Business</span>
+                    </div>
+                </div>
+
+                <h3 style="margin-top:1.25rem;">Capitalix Business</h3>
+                <p>Built for business spending and expense management.</p>
+
+                <ul class="check-list" style="margin:0.5rem 0 0;">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Employee cards with custom limits</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Expense tracking and reporting</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Digital controls for every card</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4.5 12.5l5 5 10-11"/>
+                        </svg>
+                        <span>Fraud monitoring &amp; alerts</span>
+                    </li>
+                </ul>
+
+                <ul class="card-detail-list">
+                    <li><span class="label">Annual fee</span><span class="value">$95</span></li>
+                    <li><span class="label">Purchase APR</span><span class="value">20.99%</span></li>
+                    <li><span class="label">Rewards</span><span class="value">1.5% on business purchases</span></li>
+                    <li><span class="label">Intro offer</span><span class="value">0% APR for 6 months</span></li>
+                </ul>
+
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    {% if not user.is_authenticated %}
+                        <a class="btn btn--primary btn--sm" href="{% url 'open_account_public' %}">
+                            Apply Now
+                        </a>
+                    {% else %}
+                        <a class="btn btn--primary btn--sm" href="{% url 'dashboard' %}">
+                            Dashboard
+                        </a>
+                    {% endif %}
+                    <a class="btn btn--outline btn--sm" href="#compare">Compare Cards</a>
+                </div>
+
+            </article>
+
+        </div>
+
+        <p class="fine-print" style="margin-top:1.75rem;">
+            <strong>Rates and fees are current as of {% now "F j, Y" %} and subject to change.</strong>
+            Approval, APR, and rewards are based on creditworthiness and other factors.
+            <a href="{% url 'contact' %}" style="color:var(--accent);">Contact us</a> for full terms and conditions.
+        </p>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     COMPARISON TABLE
+     ============================================================ -->
+<section class="section section--alt" id="compare">
+    <div class="container">
+
+        <div class="section-head">
+            <p class="eyebrow">Comparison</p>
+            <h2 class="display">Compare Cards Side by Side</h2>
+            <p class="lead">See how each card stacks up across the features that matter most.</p>
+        </div>
+
+        <div class="compare-table-wrap">
+            <table>
+                <caption class="sr-only">Comparison of Capitalix card options</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Feature</th>
+                        <th scope="col">Everyday</th>
+                        <th scope="col">Rewards</th>
+                        <th scope="col">Business</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Annual fee</th>
+                        <td>$0</td>
+                        <td>$45</td>
+                        <td>$95</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Purchase APR</th>
+                        <td class="num">19.99%</td>
+                        <td class="num">22.99%</td>
+                        <td class="num">20.99%</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Rewards</th>
+                        <td>1% cash back</td>
+                        <td>Up to 2% cash back</td>
+                        <td>1.5% on business purchases</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Intro APR</th>
+                        <td>0% for 12 months</td>
+                        <td>0% for 12 months</td>
+                        <td>0% for 6 months</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Intro bonus</th>
+                        <td>–</td>
+                        <td>$150 after $1,000 spend</td>
+                        <td>–</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Employee cards</th>
+                        <td>–</td>
+                        <td>–</td>
+                        <td><span class="check-mark">✓</span> Included</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Digital controls</th>
+                        <td><span class="check-mark">✓</span> Included</td>
+                        <td><span class="check-mark">✓</span> Included</td>
+                        <td><span class="check-mark">✓</span> Included</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Fraud monitoring</th>
+                        <td><span class="check-mark">✓</span> Included</td>
+                        <td><span class="check-mark">✓</span> Included</td>
+                        <td><span class="check-mark">✓</span> Included</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="scroll-hint">Scroll horizontally to see all columns.</p>
+
+        <p class="fine-print" style="margin-top:1.5rem;">
+            <strong>Rates are subject to change.</strong> All APRs are variable and based on
+            prime rate + margin. Offers and bonuses are subject to terms and conditions.
+            See our <a href="{% url 'security' %}#terms" style="color:var(--accent);">full disclosure</a> for details.
+        </p>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="section cta-band">
+    <div class="container">
+
+        <h2 class="display">Ready to Take the Next Step?</h2>
+
+        <p class="lead" style="margin:0 auto 1.75rem;">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    Manage your Capitalix operations from your staff dashboard.
+                {% else %}
+                    Access your accounts and manage your cards online.
+                {% endif %}
+            {% else %}
+                Open an account and find the card that fits your life.
+            {% endif %}
+        </p>
+
+        <div class="btn-row">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#main">
+                Back to Top
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

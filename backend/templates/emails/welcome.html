@@ -1,0 +1,8 @@
+{% extends "emails/base_email.html" %}
+{% block title %}Welcome{% endblock %}
+{% block hero_title %}Welcome to Capitalix{% endblock %}
+{% block content %}
+<h1>Welcome, {{ user.first_name }}!</h1>
+<p>Your account has been created successfully. We're excited to have you on board.</p>
+<p>To access all banking features, please complete your KYC verification from your dashboard.</p>
+{% endblock %}

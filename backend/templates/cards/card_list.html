@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Card | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Manage your Capitalix card – update settings, view details, and control your card.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .card-action-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .card-action-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .card-action-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .card-action-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .card-action-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .card-action-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .card-action-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .form-card .field {
+        margin-bottom: 1.1rem;
+    }
+
+    .form-card .field label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    .form-card .field input,
+    .form-card .field select,
+    .form-card .field textarea {
+        width: 100%;
+        min-height: 50px;
+        padding: 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .form-card .field input:focus,
+    .form-card .field select:focus,
+    .form-card .field textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .form-card .field input::placeholder,
+    .form-card .field textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 0.6;
+        font-weight: 400;
+    }
+
+    .form-card .field select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.8rem;
+    }
+
+    .form-card .field .hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0.35rem 0 0;
+        line-height: 1.4;
+    }
+
+    .form-card .field .error-text {
+        color: #c0392b;
+        font-size: 0.78rem;
+        margin: 0.25rem 0 0;
+        min-height: 1em;
+    }
+
+    .card-action-sidebar .card {
+        margin-bottom: 1rem;
+    }
+
+    .card-action-sidebar .card .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-action-sidebar .card h3 {
+        font-size: 1rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .card-action-sidebar .card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .card-action-sidebar .card .status-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .card-action-sidebar .card .status-badge--active {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .card-action-sidebar .card .status-badge--inactive {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .card-action-sidebar .card .status-badge--blocked {
+        background: rgba(239, 68, 68, 0.12);
+        color: #b91c1c;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    @media (max-width: 860px) {
+        .card-action-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card-action-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .form-card .field input,
+        .form-card .field select,
+        .form-card .field textarea {
+            min-height: 44px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+        }
+    }
+
+    :root[data-theme="dark"] .form-card .field input,
+    :root[data-theme="dark"] .form-card .field select,
+    :root[data-theme="dark"] .form-card .field textarea {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .form-card .field input:focus,
+    :root[data-theme="dark"] .form-card .field select:focus,
+    :root[data-theme="dark"] .form-card .field textarea:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    :root[data-theme="dark"] .card-action-sidebar .card .status-badge--inactive {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    :root[data-theme="dark"] .card-action-sidebar .card .status-badge--blocked {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="card-action-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'card_list' %}">Cards</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Manage Card</span>
+                </p>
+                <h1>Manage Card •••• {{ card.last_four }}</h1>
+                <p class="sub">Update settings, view details, and control your card.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'card_list' %}" class="btn btn--outline btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Back to Cards
+                </a>
+            </div>
+
+        </div>
+
+        <div class="card-action-grid">
+
+            <!-- Main Form -->
+            <div>
+                <form class="form-card" method="post" action="{% url 'card_action' card.id %}" novalidate>
+                    {% csrf_token %}
+
+                    <p class="eyebrow" style="margin-bottom:.2rem;">Card Settings</p>
+                    <h2 style="font-size:1.2rem; margin:0 0 0.4rem;">Update Card Preferences</h2>
+                    <p class="muted small" style="margin:0 0 1.25rem;">Manage your card settings and preferences.</p>
+
+                    {% if form.non_field_errors %}
+                        <div class="error-text" role="alert" style="margin-bottom:1rem;">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="field">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="hint">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="error-text" role="alert">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="action-buttons">
+                        <button class="btn btn--primary" type="submit">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                            Apply Changes
+                        </button>
+                        <button class="btn btn--outline" type="button" disabled style="opacity:0.5; cursor:not-allowed;">
+                            Freeze Card
+                        </button>
+                    </div>
+
+                    <p class="form-note" style="margin-top:1.25rem;">
+                        <strong>Note:</strong> Card management features are coming soon. This form is a preview of the card settings interface.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="card-action-sidebar">
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <circle cx="12" cy="12" r="8.5"/>
+                            <path d="M12 7.5V12l3.2 2"/>
+                        </svg>
+                    </div>
+                    <h3>Card Details</h3>
+                    <p>
+                        <strong>Type:</strong> {{ card.get_card_type_display }}<br>
+                        <strong>Last Four:</strong> {{ card.last_four }}<br>
+                        <strong>Expires:</strong> {{ card.expiration_date|date:"m/y" }}
+                    </p>
+                    <p style="margin-top:0.3rem;">
+                        <span class="status-badge
+                            {% if card.status == 'ACTIVE' %}status-badge--active
+                            {% elif card.status == 'INACTIVE' %}status-badge--inactive
+                            {% elif card.status == 'BLOCKED' %}status-badge--blocked{% endif %}">
+                            {{ card.get_status_display }}
+                        </span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M12 3.5l7 2.8v5.2c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6.3l7-2.8Z"/>
+                            <path d="M9.2 12.2l2 2 3.6-3.9"/>
+                        </svg>
+                    </div>
+                    <h3>Need help?</h3>
+                    <p>If you've lost your card or suspect fraudulent activity, contact us immediately.</p>
+                    <a href="{% url 'contact' %}" class="link-arrow" style="margin-top:0.5rem; display:inline-flex;">
+                        Contact Support
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M5 12h13"/><path d="M13 6.5 18.5 12 13 17.5"/>
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

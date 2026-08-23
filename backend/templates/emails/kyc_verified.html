@@ -1,0 +1,8 @@
+{% extends "emails/base_email.html" %}
+{% block title %}KYC Verified{% endblock %}
+{% block hero_title %}Account Verified{% endblock %}
+{% block content %}
+<h1>Congratulations, {{ user.first_name }}!</h1>
+<p>Your identity verification has been approved. Your bank account is now fully active.</p>
+<p>You can now enjoy all Capitalix banking services including transfers, cards, and loans.</p>
+{% endblock %}

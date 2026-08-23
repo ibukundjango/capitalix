@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Account Details | Capitalix{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ACCOUNT DETAIL PAGE STYLES */
+    .account-detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .account-detail-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .account-detail-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .account-detail-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .account-detail-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .account-detail-header .header-left .account-sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .account-detail-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .account-detail-header .header-actions .btn {
+        min-height: 40px;
+    }
+
+    .balance-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .balance-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow 0.2s ease;
+    }
+
+    .balance-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .balance-card .label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 0 0 0.2rem;
+    }
+
+    .balance-card .amount {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+        font-variant-numeric: tabular-nums;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .transaction-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .transaction-wrap table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px; /* increased for receipt column */
+    }
+
+    .transaction-wrap table thead th {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        font-weight: 700;
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .transaction-wrap table tbody td {
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.92rem;
+        color: var(--text);
+    }
+
+    .transaction-wrap table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .transaction-wrap table tbody td .amount-positive {
+        color: var(--positive);
+        font-weight: 600;
+    }
+
+    .transaction-wrap table tbody td .amount-negative {
+        color: #b91c1c;
+        font-weight: 600;
+    }
+
+    .transaction-wrap table tbody td .status-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .transaction-wrap table tbody td .status-badge--completed {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .transaction-wrap table tbody td .status-badge--pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .transaction-wrap table tbody td .status-badge--failed {
+        background: rgba(239, 68, 68, 0.12);
+        color: #b91c1c;
+    }
+
+    .receipt-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .receipt-link:hover {
+        text-decoration: underline;
+    }
+
+    .no-transactions {
+        padding: 2.5rem 2rem;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .no-transactions .icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .no-transactions h3 {
+        margin: 0.25rem 0 0.4rem;
+        color: var(--text);
+    }
+
+    @media (max-width: 640px) {
+        .account-detail-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .account-detail-header .header-actions {
+            justify-content: stretch;
+        }
+
+        .account-detail-header .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .balance-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .transaction-wrap table {
+            font-size: 0.85rem;
+            min-width: 520px;
+        }
+
+        .transaction-wrap table th,
+        .transaction-wrap table td {
+            padding: 0.6rem 0.8rem;
+        }
+    }
+
+    :root[data-theme="dark"] .balance-card {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .transaction-wrap {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .transaction-wrap table thead th {
+        background: var(--surface-2);
+    }
+
+    :root[data-theme="dark"] .transaction-wrap table tbody td .status-badge--pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    :root[data-theme="dark"] .transaction-wrap table tbody td .status-badge--failed {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+
+    :root[data-theme="dark"] .transaction-wrap table tbody td .amount-negative {
+        color: #f87171;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="account-detail-header">
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <a href="#accounts">Accounts</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">{{ account.get_account_type_display }}</span>
+                </p>
+                <h1>{{ account.get_account_type_display }}</h1>
+                <p class="account-sub">
+                    Account Number: <strong>{{ account.account_number }}</strong>
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'dashboard' %}#accounts" class="btn btn--outline btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Back to Accounts
+                </a>
+                <a href="{% url 'transfer' %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                        <path d="M7 6v4M17 14v4"/>
+                    </svg>
+                    Transfer Money
+                </a>
+            </div>
+        </div>
+
+        <!-- BALANCE CARDS -->
+        <div class="balance-grid">
+            <div class="balance-card">
+                <p class="label">Current Balance</p>
+                <p class="amount">${{ account.balance|floatformat:2 }}</p>
+            </div>
+            <div class="balance-card">
+                <p class="label">Available Balance</p>
+                <p class="amount">${{ account.available_balance|floatformat:2 }}</p>
+            </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS -->
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.3rem, 2vw, 1.6rem); margin:0 0 1rem; letter-spacing:-0.02em;">
+            Recent Transactions
+        </h2>
+
+        {% if transactions %}
+            <div class="transaction-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                            <tr>
+                                <td>{{ tx.created_at|date:"M d, Y H:i" }}</td>
+                                <td>{{ tx.get_transaction_type_display }}</td>
+                                <td>{{ tx.description }}</td>
+                                <td>
+                                    {% if tx.amount >= 0 %}
+                                        <span class="amount-positive">+${{ tx.amount|floatformat:2 }}</span>
+                                    {% else %}
+                                        <span class="amount-negative">-${{ tx.amount|floatformat:2 }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="status-badge
+                                        {% if tx.status == 'COMPLETED' %}status-badge--completed
+                                        {% elif tx.status == 'PENDING' %}status-badge--pending
+                                        {% elif tx.status == 'FAILED' %}status-badge--failed{% endif %}">
+                                        {{ tx.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'transaction_receipt' tx.id %}" class="receipt-link" target="_blank">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="7 10 12 15 17 10"/>
+                                            <line x1="12" y1="15" x2="12" y2="3"/>
+                                        </svg>
+                                        Receipt
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p class="scroll-hint" style="margin-top:0.5rem;">Scroll horizontally to see all columns.</p>
+        {% else %}
+            <div class="transaction-wrap">
+                <div class="no-transactions">
+                    <div class="icon" aria-hidden="true">📭</div>
+                    <h3>No transactions yet</h3>
+                    <p>Your recent banking activity will appear here.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- SECURITY NOTE -->
+        <div class="form-note" style="margin-top:2rem; padding:1rem 1.25rem;">
+            <strong>Security reminder.</strong>
+            Never share your account number, password, or verification codes with anyone.
+            Capitalix will never ask you for this information over the phone or by email.
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

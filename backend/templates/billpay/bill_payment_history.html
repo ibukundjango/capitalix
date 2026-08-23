@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payment History | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View your Capitalix bill payment history and track scheduled payments.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .history-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .history-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .history-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .history-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .history-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .payment-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .payment-item:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    .payment-item .payment-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .payment-item .payment-info .payee-name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--text);
+    }
+
+    .payment-item .payment-info .payment-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .payment-item .payment-info .payment-meta span {
+        margin-right: 0.5rem;
+    }
+
+    .payment-item .payment-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.2rem;
+        text-align: right;
+    }
+
+    .payment-item .payment-right .amount {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .payment-item .payment-right .status-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .payment-item .payment-right .status-badge--completed {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .payment-item .payment-right .status-badge--pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .payment-item .payment-right .status-badge--failed {
+        background: rgba(239, 68, 68, 0.12);
+        color: #b91c1c;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .history-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .payment-item {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 1.25rem 1rem;
+        }
+
+        .payment-item .payment-right {
+            align-items: center;
+            text-align: center;
+        }
+    }
+
+    :root[data-theme="dark"] .payment-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .payment-item .payment-right .status-badge--pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    :root[data-theme="dark"] .payment-item .payment-right .status-badge--failed {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="history-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'bill_pay' %}">Bill Pay</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">History</span>
+                </p>
+                <h1>Payment History</h1>
+                <p class="sub">Track all your scheduled and completed bill payments.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'bill_pay' %}" class="btn btn--primary btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                        <path d="M7 6v4M17 14v4"/>
+                    </svg>
+                    New Payment
+                </a>
+            </div>
+
+        </div>
+
+        {% if payments %}
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                {% for payment in payments %}
+                    <div class="payment-item">
+                        <div class="payment-info">
+                            <span class="payee-name">{{ payment.payee.name }}</span>
+                            <span class="payment-meta">
+                                <span>📅 {{ payment.created_at|date:"M d, Y" }}</span>
+                                <span>🔁 {{ payment.get_frequency_display|default:"One‑time" }}</span>
+                            </span>
+                        </div>
+                        <div class="payment-right">
+                            <span class="amount">${{ payment.amount|floatformat:2 }}</span>
+                            <span class="status-badge
+                                {% if payment.status == 'COMPLETED' %}status-badge--completed
+                                {% elif payment.status == 'PENDING' %}status-badge--pending
+                                {% elif payment.status == 'FAILED' %}status-badge--failed{% endif %}">
+                                {{ payment.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon" aria-hidden="true">📭</div>
+                <h3>No payments yet</h3>
+                <p>You haven't scheduled any bill payments. Get started by adding a payee and scheduling your first payment.</p>
+                <a href="{% url 'payee_add' %}" class="btn btn--primary">Add a Payee</a>
+                <a href="{% url 'bill_pay' %}" class="btn btn--outline" style="margin-left:0.5rem;">Schedule Payment</a>
+            </div>
+        {% endif %}
+
+        <div class="form-note" style="margin-top:2rem; padding:1rem 1.25rem;">
+            <strong>Coming soon:</strong> Full payment history with filtering, sorting, and export options will be available in a future update.
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

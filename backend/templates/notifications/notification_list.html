@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notifications | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View and manage your Capitalix notifications and alerts.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .notifications-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .notifications-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .notifications-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .notifications-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .notifications-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        margin-bottom: 0.75rem;
+        position: relative;
+    }
+
+    .notification-item:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    .notification-item.unread {
+        border-left: 4px solid var(--accent);
+        background: var(--accent-soft);
+    }
+
+    .notification-item.unread .notification-dot {
+        display: block;
+    }
+
+    .notification-dot {
+        display: none;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        margin-top: 0.4rem;
+    }
+
+    .notification-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-content .notification-title {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text);
+        margin: 0 0 0.2rem;
+    }
+
+    .notification-content .notification-message {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+        line-height: 1.5;
+    }
+
+    .notification-content .notification-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+    }
+
+    .notification-content .notification-meta .time {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .notification-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        margin-left: 0.5rem;
+    }
+
+    .notification-actions .link-arrow {
+        font-size: 0.82rem;
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .notification-actions .link-arrow:hover {
+        text-decoration: underline;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .notifications-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .notifications-header .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .notifications-header .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .notification-item {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1rem;
+        }
+
+        .notification-actions {
+            margin-left: 0;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+            justify-content: flex-end;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+    }
+
+    :root[data-theme="dark"] .notification-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .notification-item.unread {
+        background: var(--accent-soft);
+        border-left-color: var(--accent);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <div class="notifications-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Notifications</span>
+                </p>
+                <h1>Notifications</h1>
+                <p class="sub">Stay up to date with your account activity and alerts.</p>
+            </div>
+
+            <div class="header-actions">
+                {% if unread_count > 0 %}
+                    <a href="{% url 'notification_mark_all_read' %}" class="btn btn--outline btn--sm">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                        Mark All Read
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        {% if notifications %}
+            <div style="display:flex; flex-direction:column;">
+                {% for notification in notifications %}
+                    <div class="notification-item {% if not notification.read %}unread{% endif %}">
+
+                        <span class="notification-dot" aria-hidden="true"></span>
+
+                        <div class="notification-content">
+                            <p class="notification-title">{{ notification.title }}</p>
+                            <p class="notification-message">{{ notification.message }}</p>
+                            <div class="notification-meta">
+                                <span class="time">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <circle cx="12" cy="12" r="8.5"/>
+                                        <path d="M12 7.5V12l3.2 2"/>
+                                    </svg>
+                                    {{ notification.created_at|date:"M d, Y H:i" }}
+                                </span>
+                                {% if not notification.read %}
+                                    <span class="status-badge" style="background:var(--accent-soft); color:var(--accent); font-size:0.65rem; padding:0.1rem 0.5rem; border-radius:var(--radius-pill);">
+                                        New
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="notification-actions">
+                            {% if not notification.read %}
+                                <a href="{% url 'notification_mark_read' notification.id %}" class="link-arrow">
+                                    Mark Read
+                                </a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon" aria-hidden="true">🔔</div>
+                <h3>No notifications</h3>
+                <p>You're all caught up! Notifications about your account activity will appear here.</p>
+                <a href="{% url 'dashboard' %}" class="btn btn--outline">Go to Dashboard</a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

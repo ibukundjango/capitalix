@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #1e293b;
+            margin: 0;
+            padding: 20px;
+        }
+        .receipt-container {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .receipt-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #4a148c 100%);
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .receipt-header .brand {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .receipt-header .title {
+            font-size: 18px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        .receipt-body {
+            padding: 25px;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .receipt-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+        .receipt-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .amount {
+            font-size: 22px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        .status-completed {
+            color: #16a34a;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: #d97706;
+            font-weight: bold;
+        }
+        .status-failed {
+            color: #dc2626;
+            font-weight: bold;
+        }
+        .receipt-footer {
+            background: #f8fafc;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <div class="brand">Capitalix Bank</div>
+            <div class="title">Transaction Receipt</div>
+        </div>
+
+        <div class="receipt-body">
+            <div class="receipt-row">
+                <span class="receipt-label">Receipt Number</span>
+                <span class="receipt-value">#{{ transaction.pk }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Date</span>
+                <span class="receipt-value">{{ transaction.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Account</span>
+                <span class="receipt-value">{{ transaction.account.account_number }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Type</span>
+                <span class="receipt-value">{{ transaction.get_transaction_type_display }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Description</span>
+                <span class="receipt-value">{{ transaction.description }}</span>
+            </div>
+            {% if transaction.reference %}
+            <div class="receipt-row">
+                <span class="receipt-label">Reference</span>
+                <span class="receipt-value">{{ transaction.reference }}</span>
+            </div>
+            {% endif %}
+            <div class="receipt-row">
+                <span class="receipt-label">Amount</span>
+                <span class="receipt-value amount">
+                    {% if transaction.amount < 0 %}-{% endif %}${{ transaction.amount|floatformat:2 }}
+                </span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Status</span>
+                <span class="receipt-value status-{{ transaction.status }}">
+                    {{ transaction.get_status_display }}
+                </span>
+            </div>
+        </div>
+
+        <div class="receipt-footer">
+            Thank you for banking with Capitalix Bank.<br>
+            This is a computer-generated receipt and does not require a signature.
+        </div>
+    </div>
+</body>
+</html>

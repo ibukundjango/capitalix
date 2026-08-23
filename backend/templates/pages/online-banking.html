@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Online & Mobile Banking Features | Capitalix{% endblock %}
+
+{% block meta_description %}
+    See how Capitalix online banking works: check balances, transfer money, pay bills, use mobile banking, access digital statements, and set up account alerts.
+{% endblock %}
+
+{% block og_title %}Online & Mobile Banking Features | Capitalix{% endblock %}
+
+{% block og_description %}
+    See how Capitalix online banking works: check balances, transfer money, pay bills, use mobile banking, access digital statements, and set up account alerts.
+{% endblock %}
+
+{% block body_class %}online-banking-page{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       ONLINE BANKING PAGE – EXTRA STYLES
+       ============================================================ */
+
+    .online-banking-features .card .icon-badge {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 1rem;
+        flex-shrink: 0;
+    }
+
+    .online-banking-features .card h3 {
+        font-size: 1.15rem;
+        margin: 0 0 0.3rem;
+    }
+
+    .online-banking-features .card p {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .online-banking-features .card {
+        padding: 1.5rem;
+    }
+
+    /* Feature description cards */
+    .feature-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .feature-detail-grid .card {
+        padding: 1.5rem;
+    }
+
+    .feature-detail-grid .card .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.6rem;
+        flex-shrink: 0;
+    }
+
+    .feature-detail-grid .card h4 {
+        font-size: 1rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .feature-detail-grid .card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 860px) {
+        .feature-detail-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .online-banking-features .card {
+            padding: 1.25rem;
+        }
+
+        .online-banking-features .card .icon-badge {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    :root[data-theme="dark"] .online-banking-features .card .icon-badge,
+    :root[data-theme="dark"] .feature-detail-grid .card .icon-badge {
+        background: var(--accent-soft);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="page-hero">
+    <div class="container">
+
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            Online Banking
+        </p>
+
+        <h1 class="display" style="max-width:22ch;">
+            Online Banking, Built to Stay Out of Your Way
+        </h1>
+
+        <p class="lead" style="max-width:66ch;">
+            Everyday banking tasks handled in a few taps – balances, transfers, payments,
+            statements, and alerts.
+        </p>
+
+        <div class="btn-row" style="margin-top:1.75rem;">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="{% url 'login' %}">
+                Log In to Online Banking
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     FEATURES
+     ============================================================ -->
+<section class="section online-banking-features">
+    <div class="container">
+
+        <div class="section-head">
+            <p class="eyebrow">Digital banking</p>
+            <h2 class="display">Your finances, available anytime</h2>
+            <p class="lead">
+                Manage your money from anywhere with tools designed to make banking
+                quick and straightforward.
+            </p>
+        </div>
+
+        <div class="grid grid--3">
+
+            <!-- Check Balances -->
+            <article class="card card--hover reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M4.5 20V4.5"/>
+                        <path d="M4.5 20h15"/>
+                        <rect x="8" y="12" width="3" height="5"/>
+                        <rect x="13.5" y="8" width="3" height="9"/>
+                    </svg>
+                </span>
+                <h3>Check Balances</h3>
+                <p>View your account information at a glance, on any device.</p>
+            </article>
+
+            <!-- Transfer Money -->
+            <article class="card card--hover reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M4 8h13l-3-3"/>
+                        <path d="M20 16H7l3 3"/>
+                    </svg>
+                </span>
+                <h3>Transfer Money</h3>
+                <p>Move funds between eligible accounts when it suits you.</p>
+            </article>
+
+            <!-- Pay Bills -->
+            <article class="card card--hover reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M6.5 3.5h7l4.5 4.5v12h-11.5Z"/>
+                        <path d="M13 3.5V8h4.5"/>
+                        <path d="M9.5 13h5M9.5 16h5"/>
+                    </svg>
+                </span>
+                <h3>Pay Bills</h3>
+                <p>Manage recurring and one-time payments in one place.</p>
+            </article>
+
+            <!-- Mobile Banking -->
+            <article class="card card--hover reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="7" y="3" width="10" height="18" rx="2.5"/>
+                        <path d="M11 18.5h2"/>
+                    </svg>
+                </span>
+                <h3>Mobile Banking</h3>
+                <p>Access your finances from your mobile device, wherever you are.</p>
+            </article>
+
+            <!-- Digital Statements -->
+            <article class="card card--hover reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M6.5 3.5h7l4.5 4.5v12h-11.5Z"/>
+                        <path d="M13 3.5V8h4.5"/>
+                        <path d="M9.5 13h5M9.5 16h5"/>
+                    </svg>
+                </span>
+                <h3>Digital Statements</h3>
+                <p>Access account statements online instead of waiting for the mail.</p>
+            </article>
+
+            <!-- Alerts -->
+            <article class="card card--hover reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M6.5 10a5.5 5.5 0 0 1 11 0c0 4 1.5 5.5 1.5 5.5H5S6.5 14 6.5 10Z"/>
+                        <path d="M10 18.5a2.2 2.2 0 0 0 4 0"/>
+                    </svg>
+                </span>
+                <h3>Alerts</h3>
+                <p>Stay informed about account activity that matters to you.</p>
+            </article>
+
+        </div>
+
+        <p class="fine-print" style="margin-top:1.75rem;">
+            <strong>Available to eligible account holders.</strong> Online and mobile banking features
+            are included with your Capitalix account. <a href="{% url 'contact' %}" style="color:var(--accent);">Contact our team</a>
+            to learn more about getting started.
+        </p>
+
+        <div class="btn-row" style="margin-top:1.5rem;">
+
+            <a class="btn btn--primary" href="{% url 'login' %}">
+                Log In to Online Banking
+            </a>
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--outline" href="{% url 'open_account_public' %}">
+                    Enroll in Online Banking
+                </a>
+            {% else %}
+                <a class="btn btn--outline" href="{% url 'dashboard' %}">
+                    Go to Dashboard
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     FEATURE DETAILS
+     ============================================================ -->
+<section class="section section--alt">
+    <div class="container">
+
+        <div class="section-head">
+            <p class="eyebrow">What you can do</p>
+            <h2 class="display">More than just a balance</h2>
+            <p class="lead">
+                From everyday tasks to financial planning, our digital tools are built
+                to help you stay in control.
+            </p>
+        </div>
+
+        <div class="feature-detail-grid">
+
+            <div class="card reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="12" r="8.5"/>
+                        <path d="M12 7.5V12l2.5 1.5"/>
+                    </svg>
+                </span>
+                <h4>Transaction history</h4>
+                <p>Review deposits, withdrawals, and transfers with clear details and searchable records.</p>
+            </div>
+
+            <div class="card reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                        <path d="M2.5 10h19"/>
+                    </svg>
+                </span>
+                <h4>Card management</h4>
+                <p>Freeze lost cards, set spending limits, and manage your card preferences online.</p>
+            </div>
+
+            <div class="card reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M4.5 20V4.5"/>
+                        <path d="M4.5 20h15"/>
+                        <rect x="8" y="12" width="3" height="5"/>
+                        <rect x="13.5" y="8" width="3" height="9"/>
+                    </svg>
+                </span>
+                <h4>Account analytics</h4>
+                <p>Visualise your spending patterns and track your savings goals over time.</p>
+            </div>
+
+            <div class="card reveal">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M6.5 10a5.5 5.5 0 0 1 11 0c0 4 1.5 5.5 1.5 5.5H5S6.5 14 6.5 10Z"/>
+                        <path d="M10 18.5a2.2 2.2 0 0 0 4 0"/>
+                    </svg>
+                </span>
+                <h4>Custom alerts</h4>
+                <p>Set notifications for low balances, large transactions, and payment due dates.</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="section cta-band">
+    <div class="container">
+
+        <h2 class="display">Ready to Take the Next Step?</h2>
+
+        <p class="lead" style="margin:0 auto 1.75rem;">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    Manage your Capitalix operations from your staff dashboard.
+                {% else %}
+                    Access your accounts and explore online banking features.
+                {% endif %}
+            {% else %}
+                Open an account and start banking online with Capitalix.
+            {% endif %}
+        </p>
+
+        <div class="btn-row">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#main">
+                Back to Top
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

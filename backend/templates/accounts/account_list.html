@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Your Accounts | Capitalix{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       ACCOUNTS LIST STYLES
+       ============================================================ */
+
+    .accounts-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .accounts-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .accounts-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .accounts-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .accounts-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .accounts-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .accounts-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* Account cards */
+    .account-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .account-list .account-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        text-decoration: none;
+        color: var(--text);
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .account-list .account-item:hover {
+        border-color: var(--accent);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+    .account-list .account-item .account-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        min-width: 0;
+    }
+
+    .account-list .account-item .account-info .account-type {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--text);
+    }
+
+    .account-list .account-item .account-info .account-number {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+        font-weight: 500;
+    }
+
+    .account-list .account-item .account-info .account-number strong {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .account-list .account-item .account-balance {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.2rem;
+        text-align: right;
+    }
+
+    .account-list .account-item .account-balance .balance-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .account-list .account-item .account-balance .balance-amount {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.2;
+    }
+
+    .account-list .account-item .account-balance .view-link {
+        font-size: 0.82rem;
+        color: var(--accent);
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: gap 0.2s ease;
+    }
+
+    .account-list .account-item .account-balance .view-link:hover {
+        gap: 0.6rem;
+    }
+
+    .account-list .account-item .account-balance .view-link svg {
+        transition: transform 0.2s ease;
+    }
+
+    .account-list .account-item .account-balance .view-link:hover svg {
+        transform: translateX(3px);
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0.5rem 0 0.3rem;
+    }
+
+    .empty-state p {
+        margin: 0 0 1.25rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 640px) {
+        .accounts-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .accounts-header .header-actions {
+            justify-content: stretch;
+        }
+
+        .accounts-header .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .account-list .account-item {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 1.25rem 1rem;
+        }
+
+        .account-list .account-item .account-balance {
+            align-items: center;
+            text-align: center;
+        }
+
+        .account-list .account-item .account-balance .view-link {
+            margin-top: 0.3rem;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    :root[data-theme="dark"] .account-list .account-item {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .empty-state {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <!-- ============================================================
+             HEADER
+             ============================================================ -->
+        <div class="accounts-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">Accounts</span>
+                </p>
+                <h1>Your Accounts</h1>
+                <p class="sub">Manage and view all your Capitalix accounts.</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'dashboard' %}" class="btn btn--outline btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Back to Dashboard
+                </a>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'open_account_public' %}" class="btn btn--primary btn--sm">
+                        Open an Account
+                    </a>
+                {% else %}
+                    <a href="{% url 'open_account_public' %}" class="btn btn--primary btn--sm">
+                        Open an Account
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             ACCOUNTS LIST
+             ============================================================ -->
+        {% if accounts %}
+            <ul class="account-list">
+                {% for account in accounts %}
+                    <li>
+                        <a href="{% url 'account_detail' account.pk %}" class="account-item">
+
+                            <div class="account-info">
+                                <span class="account-type">{{ account.get_account_type_display }}</span>
+                                <span class="account-number">
+                                    Account Number: <strong>{{ account.account_number }}</strong>
+                                </span>
+                            </div>
+
+                            <div class="account-balance">
+                                <span class="balance-label">Current Balance</span>
+                                <span class="balance-amount">${{ account.balance|floatformat:2 }}</span>
+                                <span class="view-link">
+                                    View Details
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path d="M5 12h13"/>
+                                        <path d="M13 6.5 18.5 12 13 17.5"/>
+                                    </svg>
+                                </span>
+                            </div>
+
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon" aria-hidden="true">🏦</div>
+                <h3>No accounts found</h3>
+                <p>You don't have any accounts yet. Open your first account today.</p>
+                <a href="{% url 'open_account_public' %}" class="btn btn--primary">Open an Account</a>
+            </div>
+        {% endif %}
+
+        <!-- ============================================================
+             SECURITY NOTE
+             ============================================================ -->
+        <div class="form-note" style="margin-top:2rem; padding:1rem 1.25rem;">
+            <strong>Security reminder.</strong>
+            Never share your account numbers, passwords, or verification codes with anyone.
+            Capitalix will never ask you for this information over the phone or by email.
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

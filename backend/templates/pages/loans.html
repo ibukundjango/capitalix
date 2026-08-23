@@ -1,0 +1,605 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Loans | Personal, Auto, Home & Business Financing | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Explore Capitalix loan options for personal, auto, home, home equity, and business financing, and estimate your monthly payment with our calculator.
+{% endblock %}
+
+{% block og_title %}Loans | Personal, Auto, Home & Business Financing | Capitalix{% endblock %}
+
+{% block og_description %}
+    Explore Capitalix loan options for personal, auto, home, home equity, and business financing, and estimate your monthly payment with our calculator.
+{% endblock %}
+
+{% block body_class %}loans-page{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       LOANS PAGE – CALCULATOR ENHANCEMENTS
+       ============================================================ */
+
+    .calc .field input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+        height: 6px;
+        border-radius: 4px;
+        background: var(--border);
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        margin-top: 0.4rem;
+    }
+
+    .calc .field input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: 2px solid var(--bg);
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.2s ease;
+    }
+
+    .calc .field input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+    }
+
+    .calc .field input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: 2px solid var(--bg);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Premium input styling for calculator */
+    .calc .form-card .field .input {
+        min-height: 50px;
+        padding: 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        width: 100%;
+    }
+
+    .calc .form-card .field .input:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .calc .form-card .field .select {
+        min-height: 50px;
+        padding: 0.75rem 2.8rem 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        width: 100%;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+
+    .calc .form-card .field .select:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .calc .form-card .field label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--text);
+    }
+
+    .calc .form-card .field .hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0.35rem 0 0;
+    }
+
+    /* Loan product cards */
+    .loan-card .loan-rate {
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .loan-card .loan-rate .rate-value {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: var(--accent);
+        letter-spacing: -0.02em;
+    }
+
+    .loan-card .loan-rate .rate-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .loan-card .loan-rate .rate-disclaimer {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 0.15rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 860px) {
+        .calc {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .calc .form-card {
+            padding: 1.25rem;
+        }
+
+        .calc .form-card .field .input,
+        .calc .form-card .field .select {
+            min-height: 44px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.9rem;
+        }
+
+        .calc .field input[type="range"]::-webkit-slider-thumb {
+            width: 22px;
+            height: 22px;
+        }
+
+        .calc .field input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    :root[data-theme="dark"] .calc .form-card .field .input,
+    :root[data-theme="dark"] .calc .form-card .field .select {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .calc .form-card .field .input:focus,
+    :root[data-theme="dark"] .calc .form-card .field .select:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    :root[data-theme="dark"] .loan-card .loan-rate {
+        border-top-color: var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="page-hero">
+    <div class="container">
+
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            Loans
+        </p>
+
+        <h1 class="display" style="max-width:22ch;">
+            Financing for What's Next
+        </h1>
+
+        <p class="lead" style="max-width:66ch;">
+            Personal, auto, home, equity, and business financing – with clear terms and an estimate
+            you can run yourself before you ever apply.
+        </p>
+
+        <div class="btn-row" style="margin-top:1.75rem;">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#calculator">
+                Estimate a Payment
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     LOAN PRODUCTS
+     ============================================================ -->
+<section class="section">
+    <div class="container">
+
+        <div class="section-head">
+            <p class="eyebrow">Loan products</p>
+            <h2 class="display">Borrowing options built around your plans</h2>
+            <p class="lead">
+                Competitive rates and transparent terms across every loan type.
+            </p>
+        </div>
+
+        <div class="grid grid--3">
+
+            <!-- Personal Loans -->
+            <article class="card card--hover reveal loan-card" id="personal-loan">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M4 19V9l8-5 8 5v10"/>
+                        <path d="M9 19v-6h6v6"/>
+                    </svg>
+                </span>
+                <h3>Personal Loans</h3>
+                <p>Flexible financing for major expenses, consolidation, or planned projects.</p>
+                <div class="loan-rate">
+                    <span class="rate-label">APR from</span>
+                    <span class="rate-value">15.49%</span>
+                    <p class="rate-disclaimer">Fixed rate, no origination fees</p>
+                </div>
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    <a class="btn btn--outline btn--sm" href="{% url 'contact' %}">Learn More</a>
+                </div>
+            </article>
+
+            <!-- Auto Loans -->
+            <article class="card card--hover reveal loan-card" id="auto">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <circle cx="6" cy="17" r="2"/>
+                        <circle cx="18" cy="17" r="2"/>
+                        <path d="M5 17h14l1-6H4l1 6z"/>
+                        <path d="M7 11l2-4h6l2 4"/>
+                    </svg>
+                </span>
+                <h3>Auto Loans</h3>
+                <p>Financing for your next vehicle, new or used, with terms that fit your budget.</p>
+                <div class="loan-rate">
+                    <span class="rate-label">APR from</span>
+                    <span class="rate-value">6.29%</span>
+                    <p class="rate-disclaimer">Fixed rate, terms up to 84 months</p>
+                </div>
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    <a class="btn btn--outline btn--sm" href="{% url 'contact' %}">Learn More</a>
+                </div>
+            </article>
+
+            <!-- Home Loans -->
+            <article class="card card--hover reveal loan-card" id="home">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M4 10.5 12 4l8 6.5V20H4Z"/>
+                        <path d="M10 20v-5.5h4V20"/>
+                    </svg>
+                </span>
+                <h3>Home Loans</h3>
+                <p>Mortgage solutions for buying or refinancing a home, with guidance at each step.</p>
+                <div class="loan-rate">
+                    <span class="rate-label">APR from</span>
+                    <span class="rate-value">6.85%</span>
+                    <p class="rate-disclaimer">Fixed and variable options available</p>
+                </div>
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    <a class="btn btn--outline btn--sm" href="{% url 'contact' %}">Learn More</a>
+                </div>
+            </article>
+
+            <!-- Home Equity -->
+            <article class="card card--hover reveal loan-card" id="equity">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M4 4h16v16H4z"/>
+                        <path d="M8 8h8M8 12h6M8 16h4"/>
+                    </svg>
+                </span>
+                <h3>Home Equity</h3>
+                <p>Access available equity in your home for qualified purposes.</p>
+                <div class="loan-rate">
+                    <span class="rate-label">APR from</span>
+                    <span class="rate-value">8.15%</span>
+                    <p class="rate-disclaimer">Fixed rate, terms up to 20 years</p>
+                </div>
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    <a class="btn btn--outline btn--sm" href="{% url 'contact' %}">Learn More</a>
+                </div>
+            </article>
+
+            <!-- Business Loans -->
+            <article class="card card--hover reveal loan-card" id="business-loan">
+                <span class="icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="3" y="7.5" width="18" height="12" rx="2"/>
+                        <path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/>
+                        <path d="M3 12h18"/>
+                    </svg>
+                </span>
+                <h3>Business Loans</h3>
+                <p>Financing solutions for equipment, expansion, and working capital needs.</p>
+                <div class="loan-rate">
+                    <span class="rate-label">APR from</span>
+                    <span class="rate-value">9.45%</span>
+                    <p class="rate-disclaimer">Terms tailored to your business</p>
+                </div>
+                <div class="btn-row" style="margin-top:1.25rem;">
+                    <a class="btn btn--outline btn--sm" href="{% url 'contact' %}">Learn More</a>
+                </div>
+            </article>
+
+        </div>
+
+        <p class="fine-print" style="margin-top:1.75rem;">
+            <strong>Rates are current as of {% now "F j, Y" %} and subject to change.</strong>
+            All APRs are based on creditworthiness, loan amount, term, and other factors.
+            <a href="{% url 'contact' %}" style="color:var(--accent);">Contact our loan specialists</a>
+            for a personalised rate quote.
+        </p>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     LOAN CALCULATOR
+     ============================================================ -->
+<section class="section section--alt" id="calculator">
+    <div class="container">
+
+        <div class="section-head">
+            <p class="eyebrow">Loan calculator</p>
+            <h2 class="display">Estimate a Monthly Payment</h2>
+            <p class="lead">
+                Adjust the amount, rate, and term to see an illustrative monthly payment.
+                The calculation runs entirely in your browser – nothing is submitted.
+            </p>
+        </div>
+
+        <div class="calc">
+
+            <!-- Calculator Form -->
+            <form class="form-card" id="loan-calculator" novalidate>
+                <div class="field">
+                    <label for="calc-amount">
+                        Loan Amount – <span id="calc-amount-out">$25,000</span>
+                    </label>
+                    <input class="input" type="number" id="calc-amount" name="loan_amount"
+                           min="500" max="1000000" step="500" value="25000" inputmode="numeric" />
+                    <input type="range" min="1000" max="150000" step="500" value="25000"
+                           aria-label="Loan amount slider"
+                           oninput="document.getElementById('calc-amount').value=this.value;document.getElementById('calc-amount').dispatchEvent(new Event('input'))" />
+                </div>
+
+                <div class="field">
+                    <label for="calc-rate">
+                        Interest Rate (APR %) – <span id="calc-rate-out">7.50%</span>
+                    </label>
+                    <input class="input" type="number" id="calc-rate" name="interest_rate"
+                           min="0" max="40" step="0.01" value="7.5" inputmode="decimal" />
+                    <p class="hint">Current rates range from 6.29% to 15.49% based on loan type and creditworthiness.</p>
+                </div>
+
+                <div class="field">
+                    <label for="calc-term">
+                        Loan Term (months) – <span id="calc-term-out">5 years</span>
+                    </label>
+                    <select class="select" id="calc-term" name="loan_term">
+                        <option value="12">12 months (1 year)</option>
+                        <option value="24">24 months (2 years)</option>
+                        <option value="36">36 months (3 years)</option>
+                        <option value="60" selected>60 months (5 years)</option>
+                        <option value="84">84 months (7 years)</option>
+                        <option value="120">120 months (10 years)</option>
+                        <option value="180">180 months (15 years)</option>
+                        <option value="360">360 months (30 years)</option>
+                    </select>
+                </div>
+
+                <button class="btn btn--primary btn--block" type="submit">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Calculate Payment
+                </button>
+            </form>
+
+            <!-- Results -->
+            <aside class="calc-result" aria-live="polite">
+                <p class="small" style="margin:0;color:var(--on-deep-muted);">
+                    Estimated Monthly Payment
+                </p>
+                <p class="amount" id="calc-payment">$0.00</p>
+                <p class="small" style="margin:0;color:var(--on-deep-muted);" id="calc-payments">
+                    60 payments
+                </p>
+                <dl>
+                    <div>
+                        <dt>Total interest</dt>
+                        <dd id="calc-interest">$0.00</dd>
+                    </div>
+                    <div>
+                        <dt>Total paid</dt>
+                        <dd id="calc-total">$0.00</dd>
+                    </div>
+                </dl>
+                <p class="small" style="margin:1.25rem 0 0;color:var(--on-deep-muted);">
+                    Illustrative estimate only. Actual terms may vary and depend on credit approval,
+                    product selection, and applicable fees.
+                </p>
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="section cta-band">
+    <div class="container">
+
+        <h2 class="display">Ready to Take the Next Step?</h2>
+
+        <p class="lead" style="margin:0 auto 1.75rem;">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    Manage your Capitalix operations from your staff dashboard.
+                {% else %}
+                    Access your accounts and explore loan options online.
+                {% endif %}
+            {% else %}
+                Open an account and explore financing options that fit your goals.
+            {% endif %}
+        </p>
+
+        <div class="btn-row">
+
+            {% if not user.is_authenticated %}
+                <a class="btn btn--primary" href="{% url 'open_account_public' %}">
+                    Open an Account
+                </a>
+            {% else %}
+                {% if user.is_staff %}
+                    <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
+                        Staff Dashboard
+                    </a>
+                {% else %}
+                    <a class="btn btn--primary" href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btn--ghost-light" href="#main">
+                Back to Top
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calculatorForm = document.getElementById('loan-calculator');
+        const amountInput = document.getElementById('calc-amount');
+        const rateInput = document.getElementById('calc-rate');
+        const termSelect = document.getElementById('calc-term');
+
+        const amountDisplay = document.getElementById('calc-amount-out');
+        const rateDisplay = document.getElementById('calc-rate-out');
+        const termDisplay = document.getElementById('calc-term-out');
+
+        const paymentDisplay = document.getElementById('calc-payment');
+        const paymentsDisplay = document.getElementById('calc-payments');
+        const interestDisplay = document.getElementById('calc-interest');
+        const totalDisplay = document.getElementById('calc-total');
+
+        function formatCurrency(value) {
+            return '$' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function calculateLoan() {
+            const P = parseFloat(amountInput.value) || 0;
+            const annualRate = parseFloat(rateInput.value) || 0;
+            const n = parseInt(termSelect.value) || 0;
+
+            amountDisplay.textContent = formatCurrency(P);
+            rateDisplay.textContent = annualRate.toFixed(2) + '%';
+
+            const displayTerm = termSelect.options[termSelect.selectedIndex].text;
+            termDisplay.textContent = displayTerm;
+
+            if (P <= 0 || annualRate <= 0 || n <= 0) {
+                paymentDisplay.textContent = '$0.00';
+                paymentsDisplay.textContent = '0 payments';
+                interestDisplay.textContent = '$0.00';
+                totalDisplay.textContent = '$0.00';
+                return;
+            }
+
+            const monthlyRate = annualRate / 100 / 12;
+            const payment = P * monthlyRate * Math.pow(1 + monthlyRate, n) / (Math.pow(1 + monthlyRate, n) - 1);
+
+            if (!isFinite(payment) || isNaN(payment)) {
+                paymentDisplay.textContent = '$0.00';
+                paymentsDisplay.textContent = '0 payments';
+                interestDisplay.textContent = '$0.00';
+                totalDisplay.textContent = '$0.00';
+                return;
+            }
+
+            const totalPaid = payment * n;
+            const totalInterest = totalPaid - P;
+
+            paymentDisplay.textContent = formatCurrency(payment);
+            paymentsDisplay.textContent = n + ' payments';
+            interestDisplay.textContent = formatCurrency(totalInterest);
+            totalDisplay.textContent = formatCurrency(totalPaid);
+        }
+
+        amountInput.addEventListener('input', calculateLoan);
+        rateInput.addEventListener('input', calculateLoan);
+        termSelect.addEventListener('change', calculateLoan);
+
+        calculatorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateLoan();
+        });
+
+        // Initial calculation
+        calculateLoan();
+    });
+</script>
+{% endblock %}

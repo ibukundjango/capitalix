@@ -1,0 +1,9 @@
+{% extends "emails/base_email.html" %}
+{% block title %}Credit Alert{% endblock %}
+{% block hero_title %}Transaction Alert{% endblock %}
+{% block content %}
+<h1>Credit Alert</h1>
+<p>Dear {{ user.first_name }},</p>
+<p>Your account {{ account_number }} has been credited with <strong>${{ amount|floatformat:2 }}</strong>.</p>
+<p>Reference: {{ reference }}</p>
+{% endblock %}

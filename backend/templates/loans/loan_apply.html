@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Apply for a Loan | Capitalix{% endblock %}
+
+{% block meta_description %}
+    Apply for a personal, auto, home, or business loan from Capitalix.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .loan-apply-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .form-card .field {
+        margin-bottom: 1.1rem;
+    }
+
+    .form-card .field label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    .form-card .field input,
+    .form-card .field select,
+    .form-card .field textarea {
+        width: 100%;
+        min-height: 50px;
+        padding: 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .form-card .field input:focus,
+    .form-card .field select:focus,
+    .form-card .field textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .form-card .field input::placeholder,
+    .form-card .field textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 0.6;
+        font-weight: 400;
+    }
+
+    .form-card .field select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.8rem;
+    }
+
+    .form-card .field .hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0.35rem 0 0;
+        line-height: 1.4;
+    }
+
+    .form-card .field .error-text {
+        color: #c0392b;
+        font-size: 0.78rem;
+        margin: 0.25rem 0 0;
+        min-height: 1em;
+    }
+
+    .loan-apply-sidebar .card {
+        margin-bottom: 1rem;
+    }
+
+    .loan-apply-sidebar .card .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .loan-apply-sidebar .card h3 {
+        font-size: 1rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .loan-apply-sidebar .card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .loan-apply-sidebar .card ul {
+        margin: 0.5rem 0 0 1rem;
+        padding: 0;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    .loan-apply-sidebar .card ul li {
+        margin-bottom: 0.2rem;
+    }
+
+    .loan-apply-sidebar .card .rate-value {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: var(--accent);
+    }
+
+    @media (max-width: 860px) {
+        .loan-apply-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .form-card .field input,
+        .form-card .field select,
+        .form-card .field textarea {
+            min-height: 44px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    :root[data-theme="dark"] .form-card .field input,
+    :root[data-theme="dark"] .form-card .field select,
+    :root[data-theme="dark"] .form-card .field textarea {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .form-card .field input:focus,
+    :root[data-theme="dark"] .form-card .field select:focus,
+    :root[data-theme="dark"] .form-card .field textarea:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="container">
+        <p class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            &nbsp;/&nbsp;
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            &nbsp;/&nbsp;
+            <a href="{% url 'loan_list' %}">My Loans</a>
+            &nbsp;/&nbsp;
+            Apply
+        </p>
+        <h1 class="display" style="max-width:22ch;">Apply for a Loan</h1>
+        <p class="lead">Complete the application below to get started with your loan.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <div class="loan-apply-grid">
+
+            <!-- Main Form -->
+            <div>
+                <form class="form-card" method="post" action="{% url 'loan_apply' %}" novalidate>
+                    {% csrf_token %}
+
+                    <p class="eyebrow" style="margin-bottom:.2rem;">Loan Application</p>
+                    <h2 style="font-size:1.2rem; margin:0 0 0.4rem;">Application Details</h2>
+                    <p class="muted small" style="margin:0 0 1.25rem;">Provide the details for your loan request.</p>
+
+                    {% if form.non_field_errors %}
+                        <div class="error-text" role="alert" style="margin-bottom:1rem;">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="field">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="hint">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="error-text" role="alert">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button class="btn btn--primary btn--block" type="submit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Submit Application
+                    </button>
+
+                    <p class="form-note" style="margin-top:1.25rem;">
+                        <strong>Note:</strong> Loan applications are coming soon. This form is a preview of the application interface.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="loan-apply-sidebar">
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4 19V9l8-5 8 5v10"/>
+                            <path d="M9 19v-6h6v6"/>
+                        </svg>
+                    </div>
+                    <h3>Loan Options</h3>
+                    <ul>
+                        <li><strong>Personal Loan</strong> – 15.49% APR from</li>
+                        <li><strong>Auto Loan</strong> – 6.29% APR from</li>
+                        <li><strong>Home Loan</strong> – 6.85% APR from</li>
+                        <li><strong>Business Loan</strong> – 9.45% APR from</li>
+                    </ul>
+                    <p style="margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
+                        Rates subject to credit approval.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M12 3.5l7 2.8v5.2c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6.3l7-2.8Z"/>
+                            <path d="M9.2 12.2l2 2 3.6-3.9"/>
+                        </svg>
+                    </div>
+                    <h3>Need help?</h3>
+                    <p>Our loan specialists are here to help you find the right financing.</p>
+                    <a href="{% url 'contact' %}" class="link-arrow" style="margin-top:0.5rem; display:inline-flex;">
+                        Contact a Specialist
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M5 12h13"/><path d="M13 6.5 18.5 12 13 17.5"/>
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ticket Detail | Capitalix{% endblock %}
+
+{% block meta_description %}
+    View your Capitalix support ticket details and track its status.
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .ticket-detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .ticket-detail-header .header-left .breadcrumb {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0 0 0.3rem;
+    }
+
+    .ticket-detail-header .header-left .breadcrumb a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .ticket-detail-header .header-left .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .ticket-detail-header .header-left h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .ticket-detail-header .header-left .sub {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.2rem 0 0;
+    }
+
+    .ticket-detail-header .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .ticket-status-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        margin-bottom: 1.5rem;
+    }
+
+    .ticket-status-bar .status-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+
+    .ticket-status-bar .status-item .label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .ticket-status-bar .status-item .value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .ticket-status-bar .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.85rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .ticket-status-bar .status-badge--open {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+    }
+
+    .ticket-status-bar .status-badge--in_progress {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .ticket-status-bar .status-badge--resolved {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .ticket-status-bar .status-badge--closed {
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .ticket-message {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 1.5rem;
+    }
+
+    .ticket-message .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 0.75rem;
+    }
+
+    .ticket-message .message-header .sender {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .ticket-message .message-header .timestamp {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+    }
+
+    .ticket-message .message-body {
+        font-size: 0.95rem;
+        color: var(--text);
+        line-height: 1.7;
+        white-space: pre-wrap;
+    }
+
+    /* Reply form */
+    .reply-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        margin-top: 1.5rem;
+    }
+
+    .reply-section .field textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 0.75rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-alt);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        resize: vertical;
+    }
+
+    .reply-section .field textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--bg);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .reply-section .field textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 0.6;
+        font-weight: 400;
+    }
+
+    .reply-section .field label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    .reply-section .form-note {
+        margin-top: 0.75rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        border: 1px dashed var(--border-strong);
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+    }
+
+    .reply-section .btn-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .reply-section .btn-row .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem 1.5rem;
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 640px) {
+        .ticket-detail-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .ticket-status-bar {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+        }
+
+        .ticket-status-bar .status-item .value {
+            font-size: 0.9rem;
+        }
+
+        .ticket-message {
+            padding: 1rem;
+        }
+
+        .reply-section {
+            padding: 1rem;
+        }
+
+        .reply-section .btn-row {
+            flex-direction: column;
+        }
+
+        .reply-section .btn-row .btn {
+            width: 100%;
+        }
+    }
+
+    :root[data-theme="dark"] .ticket-status-bar {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .ticket-message {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .reply-section {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .reply-section .field textarea {
+        background: var(--surface-2);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .reply-section .field textarea:focus {
+        background: var(--bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    :root[data-theme="dark"] .ticket-status-bar .status-badge--open {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top:1.5rem;padding-bottom:0;">
+    <div class="container">
+
+        <!-- ============================================================
+             HEADER
+             ============================================================ -->
+        <div class="ticket-detail-header">
+
+            <div class="header-left">
+                <p class="breadcrumb">
+                    <a href="{% url 'home' %}">Home</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    &nbsp;/&nbsp;
+                    <a href="{% url 'ticket_list' %}">Support Tickets</a>
+                    &nbsp;/&nbsp;
+                    <span style="color:var(--text);">#{{ ticket.id }}</span>
+                </p>
+                <h1>{{ ticket.subject }}</h1>
+                <p class="sub">Ticket #{{ ticket.id }} &bull; {{ ticket.get_category_display|default:"General" }}</p>
+            </div>
+
+            <div class="header-actions">
+                <a href="{% url 'ticket_list' %}" class="btn btn--outline btn--sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Back to Tickets
+                </a>
+                {% if ticket.status != 'CLOSED' and ticket.status != 'RESOLVED' %}
+                    <a href="{% url 'ticket_close' ticket.id %}" class="btn btn--outline btn--sm" style="border-color: #b91c1c; color: #b91c1c;">
+                        Close Ticket
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             STATUS BAR
+             ============================================================ -->
+        <div class="ticket-status-bar">
+
+            <div class="status-item">
+                <span class="label">Status</span>
+                <span class="status-badge
+                    {% if ticket.status == 'OPEN' %}status-badge--open
+                    {% elif ticket.status == 'IN_PROGRESS' %}status-badge--in_progress
+                    {% elif ticket.status == 'RESOLVED' %}status-badge--resolved
+                    {% elif ticket.status == 'CLOSED' %}status-badge--closed{% endif %}">
+                    {{ ticket.get_status_display }}
+                </span>
+            </div>
+
+            <div class="status-item">
+                <span class="label">Created</span>
+                <span class="value">{{ ticket.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+
+            <div class="status-item">
+                <span class="label">Last Updated</span>
+                <span class="value">{{ ticket.updated_at|date:"M d, Y H:i" }}</span>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             MESSAGE
+             ============================================================ -->
+        <div class="ticket-message">
+
+            <div class="message-header">
+                <span class="sender">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                        <circle cx="12" cy="8.5" r="3.5"/>
+                        <path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/>
+                    </svg>
+                    {{ ticket.created_by.get_full_name|default:ticket.created_by.username }}
+                </span>
+                <span class="timestamp">{{ ticket.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+
+            <div class="message-body">{{ ticket.message|linebreaks }}</div>
+
+        </div>
+
+        <!-- ============================================================
+             REPLIES (if any)
+             ============================================================ -->
+        {% if ticket.replies.all %}
+            {% for reply in ticket.replies.all %}
+                <div class="ticket-message" style="margin-left:1.5rem; border-left:3px solid var(--accent);">
+
+                    <div class="message-header">
+                        <span class="sender">
+                            {% if reply.created_by == ticket.created_by %}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                                    <circle cx="12" cy="8.5" r="3.5"/>
+                                    <path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/>
+                                </svg>
+                                {{ reply.created_by.get_full_name|default:reply.created_by.username }}
+                            {% else %}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
+                                    <path d="M12 3.5l7 2.8v5.2c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6.3l7-2.8Z"/>
+                                    <path d="M9.2 12.2l2 2 3.6-3.9"/>
+                                </svg>
+                                <strong>Capitalix Support</strong>
+                            {% endif %}
+                        </span>
+                        <span class="timestamp">{{ reply.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+
+                    <div class="message-body">{{ reply.message|linebreaks }}</div>
+
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- ============================================================
+             REPLY FORM
+             ============================================================ -->
+        {% if ticket.status != 'CLOSED' and ticket.status != 'RESOLVED' %}
+            <div class="reply-section">
+
+                <p class="eyebrow" style="margin-bottom:.2rem;">Add Reply</p>
+                <h3 style="font-size:1.1rem; margin:0 0 0.4rem;">Respond to this ticket</h3>
+
+                <form method="post" action="{% url 'ticket_reply' ticket.id %}">
+                    {% csrf_token %}
+
+                    <div class="field">
+                        <label for="reply_message">Your Message</label>
+                        <textarea id="reply_message" name="message" rows="4" placeholder="Type your reply here..." required></textarea>
+                    </div>
+
+                    <div class="btn-row">
+                        <button class="btn btn--primary" type="submit">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.4rem;">
+                                <path d="M22 2 2 8l8 4 4-4"/>
+                                <path d="M10 12v8l4-4 6-4L22 2l-8 4-4 6Z"/>
+                            </svg>
+                            Send Reply
+                        </button>
+                        <button type="reset" class="btn btn--outline">Cancel</button>
+                    </div>
+
+                    <p class="form-note">
+                        <strong>Note:</strong> Replies will be sent to our support team and will help us resolve your issue faster.
+                    </p>
+                </form>
+
+            </div>
+        {% else %}
+            <div class="form-note" style="margin-top:1.5rem; padding:1rem 1.25rem; text-align:center;">
+                <strong>This ticket is closed.</strong>
+                If you have further questions, please <a href="{% url 'ticket_create' %}" style="color:var(--accent);">open a new ticket</a>.
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

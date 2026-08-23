@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}KYC Verification | Capitalix{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <p class="breadcrumb">
+      <a href="{% url 'home' %}">Home</a> &nbsp;/&nbsp; Identity Verification
+    </p>
+    <h1 class="display" style="max-width:22ch">
+      Verify Your Identity
+    </h1>
+    <p class="lead">
+      Complete your identity verification to access all available Capitalix banking services.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div style="max-width:820px;margin:0 auto">
+
+  <form class="form-card"
+        method="post"
+        enctype="multipart/form-data"
+        action="{% url 'kyc_submit' %}">
+
+    {% csrf_token %}
+
+    {{ kyc_form.non_field_errors }}
+    {{ next_of_kin_form.non_field_errors }}
+    {{ doc_form.non_field_errors }}
+    {{ terms_form.non_field_errors }}
+
+    <!-- Personal Details -->
+    <div class="section-head" style="margin-bottom:1.75rem">
+      <p class="eyebrow">Step 1</p>
+      <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem)">
+        Personal Details
+      </h2>
+      <p class="muted small">
+        Provide your personal information exactly as it appears on your identification document.
+      </p>
+    </div>
+
+    {% for field in kyc_form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+        {{ field }}
+
+        {% if field.help_text %}
+          <p class="hint">{{ field.help_text }}</p>
+        {% endif %}
+
+        {% for error in field.errors %}
+          <p class="error-text" role="alert">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+
+    <!-- Next of Kin -->
+    <div class="section-head"
+         style="margin-top:2.75rem;margin-bottom:1.75rem">
+      <p class="eyebrow">Step 2</p>
+      <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem)">
+        Next of Kin
+      </h2>
+      <p class="muted small">
+        Provide the details of a person who may be contacted when necessary.
+      </p>
+    </div>
+
+    {% for field in next_of_kin_form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+        {{ field }}
+
+        {% if field.help_text %}
+          <p class="hint">{{ field.help_text }}</p>
+        {% endif %}
+
+        {% for error in field.errors %}
+          <p class="error-text" role="alert">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+
+    <!-- Identity Document -->
+    <div class="section-head"
+         style="margin-top:2.75rem;margin-bottom:1.75rem">
+      <p class="eyebrow">Step 3</p>
+      <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem)">
+        ID Document Upload
+      </h2>
+      <p class="muted small">
+        Upload a clear copy of your identification document for verification.
+      </p>
+    </div>
+
+    <div class="form-note" style="margin-bottom:1.25rem">
+      <strong>Accepted formats:</strong>
+      SVG, PNG, JPG, and GIF.
+      <br />
+      <strong>Maximum size:</strong>
+      2MB per file.
+    </div>
+
+    {% for field in doc_form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+        {{ field }}
+
+        {% if field.help_text %}
+          <p class="hint">{{ field.help_text }}</p>
+        {% endif %}
+
+        {% for error in field.errors %}
+          <p class="error-text" role="alert">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+
+    <!-- Terms -->
+    <div class="section-head"
+         style="margin-top:2.75rem;margin-bottom:1.75rem">
+      <p class="eyebrow">Step 4</p>
+      <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem)">
+        Terms &amp; Confirmation
+      </h2>
+      <p class="muted small">
+        Review the information you have provided before submitting your verification request.
+      </p>
+    </div>
+
+    {% for field in terms_form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+        {{ field }}
+
+        {% if field.help_text %}
+          <p class="hint">{{ field.help_text }}</p>
+        {% endif %}
+
+        {% for error in field.errors %}
+          <p class="error-text" role="alert">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+
+    <div class="form-note" style="margin-top:1.5rem">
+      <strong>Verification notice.</strong>
+      Your submitted information and documents may be reviewed before your
+      identity verification is completed. Providing accurate information helps
+      prevent delays in the verification process.
+    </div>
+
+    <button class="btn btn--primary btn--block"
+            type="submit"
+            style="margin-top:1.5rem">
+      Submit for Verification
+    </button>
+
+  </form>
+
+</div>
+
+  </div>
+</section>
+{% endblock %}

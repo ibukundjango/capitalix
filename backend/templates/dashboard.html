@@ -1,0 +1,1703 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | Capitalix{% endblock %}
+
+{% block meta_description %}Manage your Capitalix accounts, view transactions, and access banking tools from your secure online dashboard.{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ============================================================
+       DASHBOARD LAYOUT - FIXED SIDEBAR + MAIN CONTENT
+       ============================================================ */
+
+    .dashboard-section {
+        padding-top: 1.5rem;
+        padding-bottom: 0;
+    }
+
+    .dashboard-wrapper {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+        min-height: calc(100vh - var(--header-h) - 3rem);
+    }
+
+    /* ============================================================
+       SIDEBAR (desktop)
+       ============================================================ */
+    .dashboard-sidebar {
+        position: sticky;
+        top: calc(var(--header-h) + 1.5rem);
+        flex: 0 0 240px;
+        background: var(--navy-800);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 0.75rem;
+        height: fit-content;
+        max-height: calc(100vh - var(--header-h) - 4rem);
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-strong) transparent;
+    }
+
+    .dashboard-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .dashboard-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .dashboard-sidebar::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
+        border-radius: 10px;
+    }
+    .dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+    }
+
+    .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0 0.75rem 1rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1rem;
+    }
+
+    .sidebar-brand .brand-mark {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: linear-gradient(140deg, var(--navy-700), var(--blue-500));
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.9rem;
+        font-family: var(--font-display);
+        flex-shrink: 0;
+    }
+
+    .sidebar-brand .brand-name {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        letter-spacing: -0.02em;
+        color: #fff;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .sidebar-nav .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--on-deep-muted);
+        text-decoration: none;
+        transition: background-color 0.18s ease, color 0.18s ease;
+        border: none;
+        background: transparent;
+        width: 100%;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .sidebar-nav .nav-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+    }
+
+    .sidebar-nav .nav-item.active {
+        background: rgba(31, 111, 235, 0.18);
+        color: var(--blue-400);
+        font-weight: 600;
+    }
+
+    .sidebar-nav .nav-item .nav-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        color: currentColor;
+    }
+
+    .sidebar-nav .nav-item .nav-label {
+        flex: 1;
+    }
+
+    .sidebar-nav .nav-item.nav-link--disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .sidebar-nav .nav-section-title {
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--on-deep-muted);
+        padding: 0.75rem 0.75rem 0.2rem;
+        opacity: 0.5;
+        margin-top: 0.25rem;
+    }
+
+    .sidebar-nav .nav-section-title:first-of-type {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    .sidebar-profile {
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 0.75rem 0.25rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .sidebar-profile .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .sidebar-profile .user-meta {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sidebar-profile .user-meta .name {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sidebar-profile .user-meta .email {
+        font-size: 0.7rem;
+        color: var(--on-deep-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sidebar-profile .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--positive);
+        flex-shrink: 0;
+    }
+
+    .sidebar-profile .logout-btn {
+        background: transparent;
+        border: none;
+        color: var(--on-deep-muted);
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 6px;
+        transition: color 0.2s, background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-profile .logout-btn:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ============================================================
+       MAIN CONTENT
+       ============================================================ */
+    .dashboard-main {
+        flex: 1;
+        min-width: 0;
+        padding-bottom: 2rem;
+    }
+
+    .dashboard-header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.75rem;
+    }
+
+    .dashboard-header-bar .header-left {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dashboard-header-bar .header-left .page-title {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .dashboard-header-bar .header-left .welcome-msg {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0.1rem 0 0;
+    }
+
+    .dashboard-header-bar .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dashboard-header-bar .header-actions .icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
+        position: relative;
+    }
+
+    .dashboard-header-bar .header-actions .icon-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-soft);
+    }
+
+    .dashboard-header-bar .header-actions .icon-btn .badge-dot {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 8px;
+        height: 8px;
+        background: #ef4444;
+        border-radius: 50%;
+        border: 2px solid var(--bg);
+    }
+
+    .dashboard-header-bar .header-actions .user-avatar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.2rem 0.6rem 0.2rem 0.2rem;
+        border-radius: 30px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+
+    .dashboard-header-bar .header-actions .user-avatar:hover {
+        border-color: var(--accent);
+    }
+
+    .dashboard-header-bar .header-actions .user-avatar .avatar-sm {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .dashboard-header-bar .header-actions .user-avatar .user-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .dashboard-header-bar .header-actions .user-avatar .dropdown-arrow {
+        color: var(--text-muted);
+        margin-left: 0.2rem;
+    }
+
+    /* ============================================================
+       CONTENT CARDS
+       ============================================================ */
+    .dashboard-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard-card .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem;
+    }
+
+    .dashboard-card .card-subtitle {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0 0 1rem;
+    }
+
+    /* ============================================================
+       TRANSFER BUTTON UNDER BALANCE
+       ============================================================ */
+    .balance-transfer-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0;
+    }
+
+    .balance-transfer-row .transfer-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.5rem;
+        border-radius: var(--radius-pill);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        background: var(--accent);
+        color: #fff;
+        box-shadow: var(--shadow-md);
+        border: none;
+        cursor: pointer;
+    }
+
+    .balance-transfer-row .transfer-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        background: var(--blue-400);
+    }
+
+    .balance-transfer-row .transfer-btn svg {
+        flex-shrink: 0;
+    }
+
+    .balance-transfer-row .transfer-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    /* ============================================================
+       MOBILE BOTTOM NAV
+       ============================================================ */
+    .mobile-bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--navy-800);
+        border-top: 1px solid var(--border);
+        padding: 0.4rem 0.5rem 0.6rem;
+        z-index: 99;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 20px 20px 0 0;
+        margin: 0 0.5rem 0.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        max-width: 500px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .mobile-bottom-nav .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.1rem;
+        padding: 0.4rem 0.2rem;
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.6rem;
+        font-weight: 500;
+        transition: color 0.2s;
+        flex: 1;
+        text-align: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .mobile-bottom-nav .nav-item .icon-wrap {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: transparent;
+        transition: background 0.2s;
+    }
+
+    .mobile-bottom-nav .nav-item.active .icon-wrap {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .mobile-bottom-nav .nav-item.active {
+        color: var(--accent);
+    }
+
+    .mobile-bottom-nav .nav-item .nav-label {
+        font-size: 0.55rem;
+        letter-spacing: 0.02em;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1024px) {
+        .dashboard-sidebar {
+            flex: 0 0 200px;
+        }
+    }
+
+    @media (max-width: 860px) {
+        .dashboard-wrapper {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .dashboard-sidebar {
+            display: none;
+        }
+
+        .mobile-bottom-nav {
+            display: flex;
+        }
+
+        .dashboard-main {
+            padding-bottom: 5rem;
+        }
+
+        .dashboard-header-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .dashboard-header-bar .header-actions {
+            justify-content: space-between;
+        }
+
+        .dashboard-header-bar .header-actions .user-avatar .user-name {
+            display: none;
+        }
+
+        .dashboard-header-bar .header-actions .user-avatar .dropdown-arrow {
+            display: none;
+        }
+
+        .dashboard-card {
+            padding: 1rem;
+        }
+
+        .balance-transfer-row .transfer-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .balance-transfer-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+        }
+
+        .balance-transfer-row .transfer-label {
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mobile-bottom-nav {
+            margin: 0 0.25rem 0.25rem;
+            padding: 0.3rem 0.2rem 0.4rem;
+        }
+
+        .mobile-bottom-nav .nav-item .icon-wrap {
+            width: 30px;
+            height: 30px;
+        }
+
+        .mobile-bottom-nav .nav-item .nav-label {
+            font-size: 0.5rem;
+        }
+    }
+
+    /* ============================================================
+       DARK MODE ADJUSTMENTS
+       ============================================================ */
+    :root[data-theme="dark"] .dashboard-sidebar {
+        background: var(--navy-800);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .mobile-bottom-nav {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    :root[data-theme="dark"] .dashboard-header-bar .header-actions .user-avatar {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+
+    /* ============================================================
+       KYC FORM OVERRIDES
+       ============================================================ */
+    .kyc-form .field-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+        .kyc-form .field-group {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .file-upload-area {
+        border: 2px dashed var(--border-strong);
+        border-radius: 12px;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        transition: border-color 0.2s, background 0.2s;
+        cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+    }
+
+    .file-upload-area input[type="file"] {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0;
+        font-size: 0.88rem;
+        cursor: pointer;
+    }
+
+    .file-upload-area .hint {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: 0.35rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.85rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: var(--surface-2);
+        color: var(--text-muted);
+    }
+
+    .status-badge--info {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .status-badge--success {
+        background: var(--positive-soft);
+        color: var(--positive);
+    }
+
+    .account-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 1rem 1.25rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .account-item:hover {
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    .account-item .account-meta .eyebrow {
+        margin-bottom: 0.1rem;
+    }
+
+    .account-item .account-meta .account-number {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        letter-spacing: 0.06em;
+    }
+
+    .account-item .account-balance {
+        text-align: right;
+    }
+
+    .account-item .account-balance .label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 0.15rem;
+    }
+
+    .account-item .account-balance .balance {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .quick-action {
+        display: block;
+        padding: 1.25rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        color: var(--text);
+        transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        cursor: pointer;
+    }
+
+    .quick-action:hover {
+        border-color: var(--accent);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-3px);
+    }
+
+    .quick-action .eyebrow {
+        margin-bottom: 0.2rem;
+    }
+
+    .quick-action h3 {
+        font-size: 1.1rem;
+        margin: 0 0 0.2rem;
+    }
+
+    .quick-action p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0 0 0.8rem;
+    }
+
+    .quick-action .link-arrow {
+        font-size: 0.85rem;
+    }
+
+    /* ============================================================
+       SAFE BROWSING – ensure no suspicious patterns
+       ============================================================ */
+    .no-suspicious-content {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section dashboard-section">
+    <div class="container">
+
+        <div class="dashboard-wrapper">
+
+            <!-- ============================================================
+                 SIDEBAR (desktop)
+                 ============================================================ -->
+            <aside class="dashboard-sidebar" aria-label="Dashboard navigation">
+
+                <!-- Brand -->
+                <div class="sidebar-brand">
+                    <span class="brand-mark" aria-hidden="true">C</span>
+                    <span class="brand-name">Capitalix</span>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="sidebar-nav" aria-label="Main banking navigation">
+
+                    <p class="nav-section-title">Main</p>
+
+                    <a href="#overview" class="nav-item active" aria-current="page">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M3 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+                            <circle cx="17" cy="13.5" r="1.2"/>
+                        </svg>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+
+                    {% if profile.kyc_status == 'VERIFIED' %}
+                        <a href="#accounts" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="2" y="7" width="20" height="14" rx="2.5"/>
+                                <path d="M2 11h20"/>
+                                <circle cx="9" cy="15.5" r="1.2"/>
+                            </svg>
+                            <span class="nav-label">My Accounts</span>
+                        </a>
+
+                        <a href="{% url 'transaction_history' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                            </svg>
+                            <span class="nav-label">Transactions</span>
+                        </a>
+
+                        <a href="{% url 'transfer' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M3 12h18M3 6h18M3 18h18"/>
+                                <path d="M7 6v4M17 14v4"/>
+                            </svg>
+                            <span class="nav-label">Transfer Money</span>
+                        </a>
+
+                        <a href="{% url 'statement_form' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M4 4h16v16H4z"/>
+                                <path d="M8 8h8M8 12h6M8 16h4"/>
+                            </svg>
+                            <span class="nav-label">Statements</span>
+                        </a>
+
+                        <a href="{% url 'card_list' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                                <path d="M2.5 10h19"/>
+                            </svg>
+                            <span class="nav-label">Cards</span>
+                        </a>
+
+                        <a href="{% url 'loan_list' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M4 19V9l8-5 8 5v10"/>
+                                <path d="M9 19v-6h6v6"/>
+                            </svg>
+                            <span class="nav-label">Loans</span>
+                        </a>
+
+                        <a href="{% url 'bill_pay' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="3" y="7" width="18" height="12" rx="2"/>
+                                <path d="M3 11h18"/>
+                            </svg>
+                            <span class="nav-label">Bill Pay</span>
+                        </a>
+
+                        <p class="nav-section-title">Support</p>
+
+                        <a href="{% url 'ticket_list' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/>
+                            </svg>
+                            <span class="nav-label">Support Tickets</span>
+                        </a>
+
+                        <a href="{% url 'notification_list' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                                <path d="M10 21h4"/>
+                            </svg>
+                            <span class="nav-label">Notifications</span>
+                            {% if unread_notifications_count > 0 %}
+                                <span class="badge" style="font-size:0.6rem;padding:0.1rem 0.5rem;margin-left:auto;">{{ unread_notifications_count }}</span>
+                            {% endif %}
+                        </a>
+
+                        <p class="nav-section-title">Account</p>
+
+                        <a href="{% url 'profile' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <circle cx="12" cy="8.5" r="3.5"/>
+                                <path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/>
+                            </svg>
+                            <span class="nav-label">Profile</span>
+                        </a>
+
+                        <a href="{% url 'password_reset' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="4" y="11" width="16" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <span class="nav-label">Security</span>
+                        </a>
+
+                        <a href="{% url 'logout' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            <span class="nav-label">Sign Out</span>
+                        </a>
+
+                    {% else %}
+                        <!-- Locked items for unverified users -->
+                        <span class="nav-item nav-link--disabled">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="2" y="7" width="20" height="14" rx="2.5"/>
+                                <path d="M2 11h20"/>
+                                <circle cx="9" cy="15.5" r="1.2"/>
+                            </svg>
+                            <span class="nav-label">My Accounts</span>
+                        </span>
+
+                        <span class="nav-item nav-link--disabled">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                            </svg>
+                            <span class="nav-label">Transactions</span>
+                        </span>
+
+                        <span class="nav-item nav-link--disabled">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M3 12h18M3 6h18M3 18h18"/>
+                                <path d="M7 6v4M17 14v4"/>
+                            </svg>
+                            <span class="nav-label">Transfer Money</span>
+                        </span>
+
+                        <span class="nav-item nav-link--disabled">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M4 4h16v16H4z"/>
+                                <path d="M8 8h8M8 12h6M8 16h4"/>
+                            </svg>
+                            <span class="nav-label">Statements</span>
+                        </span>
+
+                        <span class="nav-item nav-link--disabled">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                                <path d="M2.5 10h19"/>
+                            </svg>
+                            <span class="nav-label">Cards</span>
+                        </span>
+
+                        <span class="nav-item nav-link--disabled">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M4 19V9l8-5 8 5v10"/>
+                                <path d="M9 19v-6h6v6"/>
+                            </svg>
+                            <span class="nav-label">Loans</span>
+                        </span>
+
+                        <span class="nav-item nav-link--disabled">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="3" y="7" width="18" height="12" rx="2"/>
+                                <path d="M3 11h18"/>
+                            </svg>
+                            <span class="nav-label">Bill Pay</span>
+                        </span>
+
+                        <p class="nav-section-title">Support</p>
+
+                        <a href="{% url 'ticket_list' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/>
+                            </svg>
+                            <span class="nav-label">Support Tickets</span>
+                        </a>
+
+                        <a href="{% url 'notification_list' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                                <path d="M10 21h4"/>
+                            </svg>
+                            <span class="nav-label">Notifications</span>
+                            {% if unread_notifications_count > 0 %}
+                                <span class="badge" style="font-size:0.6rem;padding:0.1rem 0.5rem;margin-left:auto;">{{ unread_notifications_count }}</span>
+                            {% endif %}
+                        </a>
+
+                        <p class="nav-section-title">Account</p>
+
+                        <a href="{% url 'profile' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <circle cx="12" cy="8.5" r="3.5"/>
+                                <path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/>
+                            </svg>
+                            <span class="nav-label">Profile</span>
+                        </a>
+
+                        <a href="{% url 'password_reset' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="4" y="11" width="16" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <span class="nav-label">Security</span>
+                        </a>
+
+                        <a href="{% url 'logout' %}" class="nav-item">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            <span class="nav-label">Sign Out</span>
+                        </a>
+                    {% endif %}
+
+                </nav>
+
+                <!-- User profile at bottom -->
+                <div class="sidebar-profile">
+                    <div class="avatar" aria-hidden="true">
+                        {{ user.first_name|slice:":1"|default:"U" }}{{ user.last_name|slice:":1"|default:"" }}
+                    </div>
+                    <div class="user-meta">
+                        <div class="name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="email">{{ user.email }}</div>
+                    </div>
+                    <span class="status-dot" title="Online"></span>
+                    <a href="{% url 'logout' %}" class="logout-btn" aria-label="Logout">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </a>
+                </div>
+
+            </aside>
+
+            <!-- ============================================================
+                 MAIN CONTENT
+                 ============================================================ -->
+            <main class="dashboard-main">
+
+                <!-- TOP HEADER BAR -->
+                <div class="dashboard-header-bar">
+
+                    <div class="header-left">
+                        <h1 class="page-title">Dashboard</h1>
+                        <p class="welcome-msg">Welcome back{% if user.first_name %}, {{ user.first_name }}{% endif %}.</p>
+                    </div>
+
+                    <div class="header-actions">
+
+                        <button class="icon-btn" aria-label="Toggle theme" data-theme-toggle>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="4"/>
+                                <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.2 5.2l1.8 1.8M17 17l1.8 1.8M18.8 5.2 17 7M7 17l-1.8 1.8"/>
+                            </svg>
+                        </button>
+
+                        <a href="{% url 'notification_list' %}" class="icon-btn" aria-label="Notifications">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                                <path d="M10 21h4"/>
+                            </svg>
+                            {% if unread_notifications_count > 0 %}
+                                <span class="badge-dot"></span>
+                            {% endif %}
+                        </a>
+
+                        <div class="user-avatar">
+                            <span class="avatar-sm" aria-hidden="true">
+                                {{ user.first_name|slice:":1"|default:"U" }}{{ user.last_name|slice:":1"|default:"" }}
+                            </span>
+                            <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                            <span class="dropdown-arrow">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ============================================================
+                     DASHBOARD CONTENT
+                     ============================================================ -->
+
+                {% if profile.kyc_status != 'VERIFIED' %}
+
+                    <!-- Verification Status -->
+                    <div class="dashboard-card" style="border-left:4px solid
+                        {% if profile.kyc_status == 'SUBMITTED' or profile.kyc_status == 'UNDER_REVIEW' %}var(--accent)
+                        {% elif profile.kyc_status == 'REJECTED' %}#b91c1c
+                        {% else %}var(--accent){% endif %};">
+
+                        {% if profile.kyc_status == 'SUBMITTED' or profile.kyc_status == 'UNDER_REVIEW' %}
+
+                            <p class="eyebrow">Verification Status</p>
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+                                <div>
+                                    <h2 style="margin:0.25rem 0 0.4rem;">Verification in progress</h2>
+                                    <p class="muted" style="margin:0;">Your documents have been submitted and are currently being reviewed by our team.</p>
+                                </div>
+                                <span class="status-badge status-badge--info">
+                                    {% if profile.kyc_status == 'SUBMITTED' %}Submitted{% else %}Under Review{% endif %}
+                                </span>
+                            </div>
+
+                        {% elif profile.kyc_status == 'REJECTED' %}
+
+                            <p class="eyebrow">Verification Status</p>
+                            <div>
+                                <h2 style="margin:0.25rem 0 0.4rem;">Verification needs attention</h2>
+                                <p class="muted" style="margin:0;">Your verification application was not approved. Please review the information below and resubmit.</p>
+                            </div>
+
+                        {% else %}
+
+                            <p class="eyebrow">Verification Required</p>
+                            <div>
+                                <h2 style="margin:0.25rem 0 0.4rem;">Complete your identity verification</h2>
+                                <p class="muted" style="margin:0;">Before you can access your accounts, transfers, transactions, and statements, you need to complete identity verification.</p>
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% if profile.kyc_status == 'SUBMITTED' or profile.kyc_status == 'UNDER_REVIEW' %}
+
+                        <!-- Under Review -->
+                        <div class="dashboard-card" style="text-align:center; padding:2.5rem 2rem;">
+                            <p class="eyebrow">KYC Verification</p>
+                            <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Application Under Review</h2>
+                            <p class="muted" style="margin:0.5rem 0;">Thank you for submitting your verification documents. Our team is currently reviewing your application.</p>
+                            <p class="muted">Please check back later for updates.</p>
+                            <div style="margin-top:1.5rem;">
+                                <a href="{% url 'dashboard' %}" class="btn btn--outline">Refresh Status</a>
+                            </div>
+                        </div>
+
+                    {% else %}
+
+                        <!-- KYC Form with masked sensitive terms -->
+                        <div class="dashboard-card" id="kyc-form">
+
+                            <p class="eyebrow">KYC Verification</p>
+                            <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Account Verification</h2>
+                            <p class="muted">To comply with regulations, please provide your information to complete the verification process.</p>
+
+                            {% if profile.kyc_status == 'REJECTED' and kyc_profile.rejection_reason %}
+                                <div class="alert" style="margin-top:1rem;border-left-color:#b91c1c;">
+                                    <strong>Verification rejected.</strong>
+                                    <p>{{ kyc_profile.rejection_reason }}</p>
+                                    <p>Please correct the information and resubmit.</p>
+                                </div>
+                            {% endif %}
+
+                            <form method="post" enctype="multipart/form-data" action="{% url 'kyc_submit' %}" class="kyc-form">
+                                {% csrf_token %}
+
+                                <!-- Personal Details -->
+                                <h3 style="margin-top:1.5rem;">Personal Details</h3>
+                                <p class="muted small">Your personal information required for identification</p>
+
+                                <div class="field-group">
+
+                                    <div class="field">
+                                        <label>Full Name</label>
+                                        <input class="input" type="text" value="{{ user.get_full_name|default:user.username }}" disabled>
+                                    </div>
+
+                                    <div class="field">
+                                        <label>Email</label>
+                                        <input class="input" type="email" value="{{ user.email }}" disabled>
+                                    </div>
+
+                                    <div class="field">
+                                        <label>Phone</label>
+                                        <input class="input" type="text" value="{{ profile.phone|default:'Not provided' }}" disabled>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.title.id_for_label }}">Title</label>
+                                        {{ kyc_form.title }}
+                                        {{ kyc_form.title.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.gender.id_for_label }}">Gender</label>
+                                        {{ kyc_form.gender }}
+                                        {{ kyc_form.gender.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.postal_code.id_for_label }}">Zipcode</label>
+                                        {{ kyc_form.postal_code }}
+                                        {{ kyc_form.postal_code.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.date_of_birth.id_for_label }}">Date of Birth</label>
+                                        {{ kyc_form.date_of_birth }}
+                                        {{ kyc_form.date_of_birth.errors }}
+                                    </div>
+
+                                </div>
+
+                                <!-- Employment -->
+                                <h3 style="margin-top:1.5rem;">Employment Information</h3>
+                                <p class="muted small">Required in case of loan or facility application</p>
+
+                                <div class="field-group">
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.government_id.id_for_label }}">National ID / S_S_N</label>
+                                        {{ kyc_form.government_id }}
+                                        {{ kyc_form.government_id.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.employment_type.id_for_label }}">Type of Employment</label>
+                                        {{ kyc_form.employment_type }}
+                                        {{ kyc_form.employment_type.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.annual_income_range.id_for_label }}">Annual Income Range</label>
+                                        {{ kyc_form.annual_income_range }}
+                                        {{ kyc_form.annual_income_range.errors }}
+                                    </div>
+
+                                </div>
+
+                                <!-- Address -->
+                                <h3 style="margin-top:1.5rem;">Your Address</h3>
+                                <p class="muted small">Your location information required for identification</p>
+
+                                <div class="field-group">
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.address_line.id_for_label }}">Address Line</label>
+                                        {{ kyc_form.address_line }}
+                                        {{ kyc_form.address_line.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.city.id_for_label }}">City</label>
+                                        {{ kyc_form.city }}
+                                        {{ kyc_form.city.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.state.id_for_label }}">State</label>
+                                        {{ kyc_form.state }}
+                                        {{ kyc_form.state.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ kyc_form.nationality.id_for_label }}">Nationality</label>
+                                        {{ kyc_form.nationality }}
+                                        {{ kyc_form.nationality.errors }}
+                                    </div>
+
+                                </div>
+
+                                <!-- Next of Kin -->
+                                <h3 style="margin-top:1.5rem;">Registered Next of Kin</h3>
+                                <p class="muted small">Information about your beneficiary</p>
+
+                                <div class="field-group">
+
+                                    <div class="field">
+                                        <label for="{{ next_of_kin_form.full_name.id_for_label }}">Beneficiary Legal Name</label>
+                                        {{ next_of_kin_form.full_name }}
+                                        {{ next_of_kin_form.full_name.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ next_of_kin_form.address.id_for_label }}">Next of Kin Address</label>
+                                        {{ next_of_kin_form.address }}
+                                        {{ next_of_kin_form.address.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ next_of_kin_form.relationship.id_for_label }}">Relationship</label>
+                                        {{ next_of_kin_form.relationship }}
+                                        {{ next_of_kin_form.relationship.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ next_of_kin_form.age.id_for_label }}">Age</label>
+                                        {{ next_of_kin_form.age }}
+                                        {{ next_of_kin_form.age.errors }}
+                                    </div>
+
+                                </div>
+
+                                <!-- Document Upload -->
+                                <h3 style="margin-top:1.5rem;">Document Upload</h3>
+                                <p class="muted small">Personal documents required for identity verification</p>
+
+                                <div class="alert small" style="margin-bottom:1rem;">
+                                    <strong>To avoid delays when verifying your account:</strong>
+                                    <ul style="margin:0.4rem 0 0 1.2rem;padding:0;">
+                                        <li>Chosen credential must not have expired</li>
+                                        <li>Document should be in good condition and clearly visible</li>
+                                        <li>Make sure there is no light glare on the document</li>
+                                    </ul>
+                                </div>
+
+                                <div class="field-group">
+
+                                    <div class="field">
+                                        <label for="{{ doc_form.doc_type.id_for_label }}">Document Type</label>
+                                        {{ doc_form.doc_type }}
+                                        {{ doc_form.doc_type.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ doc_form.front_image.id_for_label }}">Upload Front Side</label>
+                                        <div class="file-upload-area">
+                                            {{ doc_form.front_image }}
+                                            <p class="hint">Accepted formats: JPG, PNG, PDF. Max size: 10MB.</p>
+                                        </div>
+                                        {{ doc_form.front_image.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ doc_form.back_image.id_for_label }}">Upload Back Side</label>
+                                        <div class="file-upload-area">
+                                            {{ doc_form.back_image }}
+                                            <p class="hint">Accepted formats: JPG, PNG, PDF. Max size: 10MB.</p>
+                                        </div>
+                                        {{ doc_form.back_image.errors }}
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="{{ doc_form.passport_photo.id_for_label }}">Upload Passport Photograph</label>
+                                        <div class="file-upload-area">
+                                            {{ doc_form.passport_photo }}
+                                            <p class="hint">A recent, clear photo of yourself.</p>
+                                        </div>
+                                        {{ doc_form.passport_photo.errors }}
+                                    </div>
+
+                                </div>
+
+                                <!-- Terms -->
+                                <div class="field" style="margin-top:1.25rem;">
+                                    <label style="display:flex;align-items:flex-start;gap:0.6rem;font-weight:400;cursor:pointer;">
+                                        {{ terms_form.accept_terms }}
+                                        <span>I accept the <a href="{% url 'security' %}#terms" style="color:var(--accent);">Terms and Conditions</a></span>
+                                    </label>
+                                    {{ terms_form.accept_terms.errors }}
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="btn btn--primary btn--block" style="margin-top:1.5rem;">
+                                    Submit Application
+                                </button>
+
+                            </form>
+
+                            <p class="small muted" style="margin-top:1rem;">Need help with verification? Our support team is available 24/7.</p>
+
+                        </div>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <!-- ============================================================
+                         VERIFIED DASHBOARD CONTENT
+                         ============================================================ -->
+
+                    <!-- Overview / Balance Cards -->
+                    <div id="overview">
+
+                        <div class="grid grid--3" style="margin-bottom:1rem;">
+
+                            <div class="dashboard-card" style="margin-bottom:0;">
+                                <p class="eyebrow">Total Balance</p>
+                                <p style="font-family:var(--font-display); font-size:clamp(1.8rem,3vw,2.6rem); margin:0.25rem 0 0.15rem; font-variant-numeric:tabular-nums;">
+                                    ${{ total_balance|default:0|floatformat:2 }}
+                                </p>
+                                <p class="muted small" style="margin:0;">Across your eligible accounts</p>
+                            </div>
+
+                            <div class="dashboard-card" style="margin-bottom:0;">
+                                <p class="eyebrow">Available Balance</p>
+                                <p style="font-family:var(--font-display); font-size:clamp(1.8rem,3vw,2.6rem); margin:0.25rem 0 0.15rem; font-variant-numeric:tabular-nums;">
+                                    ${{ available_balance|default:0|floatformat:2 }}
+                                </p>
+                                <p class="muted small" style="margin:0;">Available for eligible transactions</p>
+                            </div>
+
+                            <div class="dashboard-card" style="margin-bottom:0;">
+                                <p class="eyebrow">Account Status</p>
+                                <p style="font-family:var(--font-display); font-size:clamp(1.3rem,2vw,1.8rem); margin:0.25rem 0 0.15rem;">
+                                    Verified
+                                </p>
+                                <p class="muted small" style="margin:0;">Your identity has been verified.</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Transfer Button Under Balance -->
+                        <div class="balance-transfer-row" style="margin-bottom:2rem;">
+                            <span class="transfer-label">Need to move money?</span>
+                            <a href="{% url 'transfer' %}" class="transfer-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                                    <path d="M7 6v4M17 14v4"/>
+                                </svg>
+                                Transfer Money
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <polyline points="9 6 15 12 9 18"/>
+                                </svg>
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- My Accounts -->
+                    <section id="accounts" style="margin-top:1.5rem;">
+
+                        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+                            <div>
+                                <p class="eyebrow">Banking Accounts</p>
+                                <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:0.35rem;">My Accounts</h2>
+                                <p class="muted small" style="margin:0;">View your Capitalix accounts and balances.</p>
+                            </div>
+                        </div>
+
+                        {% if bank_accounts %}
+
+                            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+
+                                {% for account in bank_accounts %}
+
+                                    <div class="account-item">
+
+                                        <div class="account-meta">
+                                            <p class="eyebrow" style="margin-bottom:0.1rem;">{{ account.get_account_type_display }}</p>
+                                            <p class="account-number">{{ account.account_number }}</p>
+                                            <p class="muted small" style="margin:0;">Capitalix Account</p>
+                                        </div>
+
+                                        <div class="account-balance">
+                                            <p class="label">Current Balance</p>
+                                            <p class="balance">${{ account.balance|floatformat:2 }}</p>
+                                            <div style="margin-top:0.4rem;">
+                                                <a href="{% url 'account_detail' account.pk %}" class="link-arrow" style="font-size:0.85rem;">
+                                                    View Account
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                                        <path d="M5 12h13"/>
+                                                        <path d="M13 6.5 18.5 12 13 17.5"/>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="dashboard-card" style="text-align:center; padding:2.5rem 2rem;">
+                                <p class="eyebrow">No Accounts</p>
+                                <h3>No bank accounts yet</h3>
+                                <p class="muted">Your banking accounts will appear here once they are created.</p>
+                                <a href="{% url 'open_account_public' %}" class="btn btn--primary" style="margin-top:1rem;">Open an Account</a>
+                            </div>
+
+                        {% endif %}
+
+                    </section>
+
+                    <!-- Quick Actions -->
+                    <section id="transfers" style="margin-top:3rem;">
+
+                        <div class="section-head" style="margin-bottom:1.25rem;">
+                            <p class="eyebrow">Quick Access</p>
+                            <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">What would you like to do?</h2>
+                        </div>
+
+                        <div class="grid grid--3">
+
+                            <a href="#accounts" class="quick-action">
+                                <p class="eyebrow">Accounts</p>
+                                <h3>View Accounts</h3>
+                                <p>View balances and details for your Capitalix accounts.</p>
+                                <span class="link-arrow">
+                                    View Accounts
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path d="M5 12h13"/>
+                                        <path d="M13 6.5 18.5 12 13 17.5"/>
+                                    </svg>
+                                </span>
+                            </a>
+
+                            <a href="{% url 'transfer' %}" class="quick-action">
+                                <p class="eyebrow">Transfers</p>
+                                <h3>Transfer Money</h3>
+                                <p>Move money between eligible Capitalix accounts.</p>
+                                <span class="link-arrow">
+                                    Make a Transfer
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path d="M5 12h13"/>
+                                        <path d="M13 6.5 18.5 12 13 17.5"/>
+                                    </svg>
+                                </span>
+                            </a>
+
+                            <a href="{% url 'transaction_history' %}" class="quick-action">
+                                <p class="eyebrow">Activity</p>
+                                <h3>Transaction History</h3>
+                                <p>Review recent deposits, withdrawals, and transfers.</p>
+                                <span class="link-arrow">
+                                    View Transactions
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path d="M5 12h13"/>
+                                        <path d="M13 6.5 18.5 12 13 17.5"/>
+                                    </svg>
+                                </span>
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                    <!-- Recent Transactions -->
+                    <section id="transactions" style="margin-top:3rem;">
+
+                        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+                            <div>
+                                <p class="eyebrow">Account Activity</p>
+                                <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Recent Transactions</h2>
+                            </div>
+                        </div>
+
+                        {% if recent_transactions %}
+
+                            <div class="dashboard-card" style="padding:0;overflow:hidden;">
+                                <div style="overflow-x:auto;">
+                                    <table style="width:100%;border-collapse:collapse;min-width:540px;">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:left;padding:0.85rem 1.25rem;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);background:var(--surface-2);">Date</th>
+                                                <th style="text-align:left;padding:0.85rem 1.25rem;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);background:var(--surface-2);">Description</th>
+                                                <th style="text-align:right;padding:0.85rem 1.25rem;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);background:var(--surface-2);">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for tx in recent_transactions %}
+                                                <tr>
+                                                    <td style="padding:0.85rem 1.25rem;font-size:0.88rem;">{{ tx.created_at|date:"M d, Y" }}</td>
+                                                    <td style="padding:0.85rem 1.25rem;font-size:0.88rem;"><strong>{{ tx.description }}</strong></td>
+                                                    <td style="padding:0.85rem 1.25rem;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;">${{ tx.amount|floatformat:2 }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        {% else %}
+
+                            <div class="dashboard-card" style="text-align:center; padding:2.5rem 2rem;">
+                                <p class="eyebrow">Account Activity</p>
+                                <h3>No transactions yet</h3>
+                                <p class="muted">Your recent banking activity will appear here.</p>
+                            </div>
+
+                        {% endif %}
+
+                    </section>
+
+                    <!-- Statements -->
+                    <section id="statements" style="margin-top:3rem;">
+
+                        <div class="section-head" style="margin-bottom:1.25rem;">
+                            <p class="eyebrow">Documents</p>
+                            <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Statements</h2>
+                        </div>
+
+                        <div class="grid grid--2">
+
+                            <div class="dashboard-card" style="margin-bottom:0;">
+                                <p class="eyebrow">Account Records</p>
+                                <h3 style="font-size:1.2rem;">Monthly Statements</h3>
+                                <p class="muted small">Review your account statements and historical banking activity.</p>
+                                <button type="button" class="btn btn--outline btn--sm" disabled style="opacity:0.6;cursor:not-allowed;">Statements Coming Soon</button>
+                            </div>
+
+                            <div class="dashboard-card" style="margin-bottom:0;">
+                                <p class="eyebrow">Transaction History</p>
+                                <h3 style="font-size:1.2rem;">Banking Activity</h3>
+                                <p class="muted small">Your recent transactions are shown above. Full statement downloads can be connected here.</p>
+                                <a href="{% url 'transaction_history' %}" class="btn btn--outline btn--sm">View Transactions</a>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- Profile & Security -->
+                    <section style="margin-top:3rem;">
+
+                        <div class="grid grid--2">
+
+                            <div class="dashboard-card" style="margin-bottom:0;">
+                                <p class="eyebrow">Profile</p>
+                                <h3 style="font-size:1.2rem;">Personal Information</h3>
+                                <p class="muted small">Review your personal information and account details.</p>
+                                <a href="{% url 'profile' %}" class="btn btn--outline btn--sm">Manage Profile</a>
+                            </div>
+
+                            <div class="dashboard-card" style="margin-bottom:0;">
+                                <p class="eyebrow">Security</p>
+                                <h3 style="font-size:1.2rem;">Protect Your Account</h3>
+                                <p class="muted small">Keep your password and account security settings up to date.</p>
+                                <a href="{% url 'password_reset' %}" class="btn btn--outline btn--sm">Change Password</a>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- Security Notice -->
+                    <div class="form-note" style="margin-top:3rem;padding:1.25rem 1.5rem;">
+                        <strong>Security reminder.</strong>
+                        Never share your password, verification codes, transaction PIN, or other account credentials with anyone.
+                        If you notice unexpected activity, contact Capitalix immediately.
+                    </div>
+
+                {% endif %}
+
+            </main>
+
+        </div> <!-- /dashboard-wrapper -->
+
+    </div> <!-- /container -->
+</section>
+
+<!-- ============================================================
+     MOBILE BOTTOM NAVIGATION
+     ============================================================ -->
+<nav class="mobile-bottom-nav" aria-label="Mobile banking navigation">
+
+    <a href="#overview" class="nav-item active" aria-current="page">
+        <span class="icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M3 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+                <circle cx="17" cy="13.5" r="1.2"/>
+            </svg>
+        </span>
+        <span class="nav-label">Home</span>
+    </a>
+
+    {% if profile.kyc_status == 'VERIFIED' %}
+        <a href="{% url 'transaction_history' %}" class="nav-item">
+            <span class="icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+            </span>
+            <span class="nav-label">Activity</span>
+        </a>
+
+        <a href="{% url 'transfer' %}" class="nav-item">
+            <span class="icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                    <path d="M7 6v4M17 14v4"/>
+                </svg>
+            </span>
+            <span class="nav-label">Transfer</span>
+        </a>
+
+        <a href="{% url 'card_list' %}" class="nav-item">
+            <span class="icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                    <path d="M2.5 10h19"/>
+                </svg>
+            </span>
+            <span class="nav-label">Cards</span>
+        </a>
+    {% else %}
+        <span class="nav-item" style="opacity:0.4; cursor:not-allowed;">
+            <span class="icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+            </span>
+            <span class="nav-label">Activity</span>
+        </span>
+        <span class="nav-item" style="opacity:0.4; cursor:not-allowed;">
+            <span class="icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                    <path d="M7 6v4M17 14v4"/>
+                </svg>
+            </span>
+            <span class="nav-label">Transfer</span>
+        </span>
+        <span class="nav-item" style="opacity:0.4; cursor:not-allowed;">
+            <span class="icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                    <path d="M2.5 10h19"/>
+                </svg>
+            </span>
+            <span class="nav-label">Cards</span>
+        </span>
+    {% endif %}
+
+    <a href="{% url 'profile' %}" class="nav-item">
+        <span class="icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="8.5" r="3.5"/>
+                <path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/>
+            </svg>
+        </span>
+        <span class="nav-label">Profile</span>
+    </a>
+
+</nav>
+
+{% endblock %}
