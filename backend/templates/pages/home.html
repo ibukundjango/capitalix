@@ -2,30 +2,26 @@
 {% load static %}
 
 {% block title %}
-    Capitalix – Modern Banking Built Around Your Financial Goals
+    Capitalix – Modern Platform Built Around Your Goals
 {% endblock %}
 
 {% block meta_description %}
-    Capitalix provides personal and business banking, savings, credit cards, loans, and financial planning tools – all backed by genuine support and modern digital access.
+    Capitalix provides personal and business accounts, savings, credit cards, loans, and planning tools – with modern digital access and support.
 {% endblock %}
 
 {% block og_title %}
-    Capitalix – Modern Banking Built Around Your Financial Goals
+    Capitalix – Modern Platform Built Around Your Goals
 {% endblock %}
 
 {% block og_description %}
-    Capitalix provides personal and business banking, savings, credit cards, loans and financial planning tools, with modern digital access and personal support.
+    Capitalix provides personal and business accounts, savings, credit cards, loans and planning tools, with modern digital access and personal support.
 {% endblock %}
 
 {% block extra_head %}
 <style>
-    /* ============================================================
-       MOBILE LOGIN BUTTON – hidden on desktop, visible on mobile
-       ============================================================ */
     .mobile-login-btn {
         display: none;
     }
-
     @media (max-width: 640px) {
         .mobile-login-btn {
             display: inline-flex;
@@ -35,45 +31,32 @@
 {% endblock %}
 
 {% block content %}
-
-<!-- ============================================================
-     HERO
-     ============================================================ -->
 <section class="hero">
     <div class="container">
         <div class="hero-grid">
-
             <div>
                 <p class="eyebrow eyebrow--light">
-                    Modern banking. Built around you.
+                    Modern platform. Built around you.
                 </p>
-
                 <h1 class="display">
-                    Banking Built Around Your Financial Goals
+                    Platform Built Around Your Goals
                 </h1>
-
                 <p class="lead">
                     Capitalix gives you the tools, products, and personalised support you need to manage
-                    your money, grow your savings, and plan for what&rsquo;s ahead.
+                    your money, grow your savings, and plan for what’s ahead.
                 </p>
-
                 <div class="btn-row" style="margin-top:1.9rem">
                     {% if not user.is_authenticated %}
-                        <!-- Guest: Open an Account + Mobile Login + Explore -->
                         <a class="btn btn--primary" href="{% url 'open_account_public' %}">
                             Open an Account
                         </a>
-
-                        <!-- LOGIN BUTTON – only visible on mobile -->
                         <a class="btn btn--outline mobile-login-btn" href="{% url 'login' %}">
                             Login
                         </a>
-
                         <a class="btn btn--ghost-light" href="#services">
                             Explore Our Services
                         </a>
                     {% else %}
-                        <!-- Logged in: Dashboard / Staff Dashboard + Explore -->
                         {% if user.is_staff %}
                             <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
                                 Staff Dashboard
@@ -83,13 +66,11 @@
                                 Dashboard
                             </a>
                         {% endif %}
-
                         <a class="btn btn--ghost-light" href="#services">
                             Explore Our Services
                         </a>
                     {% endif %}
                 </div>
-
                 <p class="trust-line">
                     <span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -98,9 +79,8 @@
                             <path d="M12 3.5l7 2.8v5.2c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6.3l7-2.8Z"/>
                             <path d="M9.2 12.2l2 2 3.6-3.9"/>
                         </svg>
-                        Bank‑grade security
+                        Strong security
                     </span>
-
                     <span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
@@ -110,7 +90,6 @@
                         </svg>
                         Full digital access
                     </span>
-
                     <span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
@@ -122,49 +101,37 @@
                     </span>
                 </p>
             </div>
-
             <div class="hero-media">
                 <img
                     src="{% static 'images/hero.jpg' %}"
-                    alt="A Capitalix customer reviewing her accounts on a smartphone at home"
+                    alt="A Capitalix customer reviewing accounts on a smartphone at home"
                     width="1408"
                     height="1104"
                     loading="eager"
                 />
-
                 <div class="hero-badge">
                     <p class="label small muted" style="margin:0 0 .2rem">
                         Everyday balance
                     </p>
-
                     <p style="margin:0;font-weight:600;font-size:1.15rem">
                         Always within reach
                     </p>
-
                     <p class="small muted" style="margin:.3rem 0 0">
                     </p>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
-
-<!-- ============================================================
-     QUICK INFO STRIP
-     ============================================================ -->
-<section class="info-strip" aria-label="Quick banking information">
+<section class="info-strip" aria-label="Quick information">
     <div class="container">
-
         <div class="grid grid--4">
-
             <div class="info-card reveal">
                 <p class="label">Routing number</p>
                 <p class="value">021000021</p>
-                <p class="note">Capitalix routing number for wire transfers and direct deposits.</p>
+                <p class="note">Capitalix routing number for transfers and direct deposits.</p>
             </div>
-
             <div class="info-card reveal">
                 <p class="label">Branch hours</p>
                 <p class="value">
@@ -173,15 +140,13 @@
                 </p>
                 <p class="note">All branches are closed on Sundays and federal holidays.</p>
             </div>
-
             <div class="info-card reveal">
                 <p class="label">24/7 support</p>
                 <p class="value">1‑617-785-5366</p>
                 <p class="note">Call any time – our support team is here around the clock.</p>
             </div>
-
             <div class="info-card reveal">
-                <p class="label">Online banking</p>
+                <p class="label">Online access</p>
                 <p class="value">Secure access anytime</p>
                 <p class="note">
                     <a class="link-arrow" href="{% url 'online-banking' %}">
@@ -189,7 +154,6 @@
                     </a>
                 </p>
             </div>
-
         </div>
     </div>
 </section>
@@ -978,11 +942,9 @@
      ============================================================ -->
 <section class="section cta-band">
     <div class="container">
-
         <h2 class="display">
             Ready to Take the Next Step?
         </h2>
-
         <p class="lead" style="margin:0 auto 1.75rem">
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
@@ -994,47 +956,32 @@
                 Open an account and experience a simpler way to manage your money.
             {% endif %}
         </p>
-
         <div class="btn-row">
-
             {% if user.is_authenticated %}
-
                 {% if user.is_staff %}
-
                     <a class="btn btn--primary" href="{% url 'staff_dashboard' %}">
                         Staff Dashboard
                     </a>
-
                     <a class="btn btn--ghost-light" href="{% url 'logout' %}">
                         Logout
                     </a>
-
                 {% else %}
-
                     <a class="btn btn--primary" href="{% url 'dashboard' %}">
                         Dashboard
                     </a>
-
                     <a class="btn btn--ghost-light" href="{% url 'contact' %}">
                         Contact Us
                     </a>
-
                 {% endif %}
-
             {% else %}
-
                 <a class="btn btn--primary" href="{% url 'open_account_public' %}">
                     Open an Account
                 </a>
-
                 <a class="btn btn--ghost-light" href="{% url 'contact' %}">
                     Contact Us
                 </a>
-
             {% endif %}
-
         </div>
     </div>
 </section>
-
 {% endblock %}
