@@ -9,407 +9,85 @@
 
 {% block extra_head %}
 <style>
-    /* ============================================================
-       REGISTRATION FORM – STEP PROGRESS & STYLING
-       ============================================================ */
-
-    .step-progress {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .step-progress .step-dot {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-muted);
-    }
-
-    .step-progress .step-dot .dot {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: var(--surface-2);
-        border: 2px solid var(--border);
-        display: grid;
-        place-items: center;
-        font-weight: 700;
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        transition: background 0.3s, border-color 0.3s, color 0.3s;
-    }
-
-    .step-progress .step-dot.active .dot {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: #fff;
-    }
-
-    .step-progress .step-dot.completed .dot {
-        background: var(--positive-soft);
-        border-color: var(--positive);
-        color: var(--positive);
-    }
-
-    .step-progress .step-line {
-        flex: 0 0 32px;
-        height: 2px;
-        background: var(--border);
-        border-radius: 2px;
-    }
-
-    .step-progress .step-line.completed {
-        background: var(--positive);
-    }
-
-    /* ============================================================
-       FORM FIELDS
-       ============================================================ */
-
-    .form-card .field {
-        margin-bottom: 1.1rem;
-    }
-
-    .form-card .field > label {
-        display: block;
-        margin-bottom: 0.35rem;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: var(--text);
-        letter-spacing: 0.01em;
-    }
-
+    /* (keep all the existing step-progress, field, password-strength, checkbox, responsive, dark-mode styles exactly as you had them) */
+    .step-progress { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .step-progress .step-dot { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+    .step-progress .step-dot .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--border); display: grid; place-items: center; font-weight: 700; font-size: 0.75rem; color: var(--text-muted); transition: background 0.3s, border-color 0.3s, color 0.3s; }
+    .step-progress .step-dot.active .dot { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .step-progress .step-dot.completed .dot { background: var(--positive-soft); border-color: var(--positive); color: var(--positive); }
+    .step-progress .step-line { flex: 0 0 32px; height: 2px; background: var(--border); border-radius: 2px; }
+    .step-progress .step-line.completed { background: var(--positive); }
+    .form-card .field { margin-bottom: 1.1rem; }
+    .form-card .field > label { display: block; margin-bottom: 0.35rem; font-size: 0.82rem; font-weight: 600; color: var(--text); letter-spacing: 0.01em; }
     .form-card .field input:not([type="checkbox"]):not([type="radio"]),
     .form-card .field select,
-    .form-card .field textarea {
-        width: 100%;
-        min-height: 50px;
-        padding: 0.75rem 1.1rem;
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        background: var(--bg-alt);
-        color: var(--text);
-        font: inherit;
-        font-size: 0.95rem;
-        transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
-        appearance: none;
-        -webkit-appearance: none;
-        box-sizing: border-box;
-    }
-
-    .form-card .field textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
-
+    .form-card .field textarea { width: 100%; min-height: 50px; padding: 0.75rem 1.1rem; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-alt); color: var(--text); font: inherit; font-size: 0.95rem; transition: border-color 0.25s, box-shadow 0.25s, background 0.25s; appearance: none; -webkit-appearance: none; box-sizing: border-box; }
+    .form-card .field textarea { min-height: 120px; resize: vertical; }
     .form-card .field input:not([type="checkbox"]):not([type="radio"]):focus,
     .form-card .field select:focus,
-    .form-card .field textarea:focus {
-        outline: none;
-        border-color: var(--accent);
-        background: var(--bg);
-        box-shadow: 0 0 0 4px var(--accent-soft);
-    }
-
+    .form-card .field textarea:focus { outline: none; border-color: var(--accent); background: var(--bg); box-shadow: 0 0 0 4px var(--accent-soft); }
     .form-card .field input:not([type="checkbox"]):not([type="radio"])::placeholder,
-    .form-card .field textarea::placeholder {
-        color: var(--text-muted);
-        opacity: 0.6;
-        font-weight: 400;
-    }
-
-    .form-card .field select {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        padding-right: 2.8rem;
-    }
-
-    .form-card .field .hint {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin: 0.35rem 0 0;
-        line-height: 1.4;
-    }
-
-    .form-card .field .error-text {
-        color: #c0392b;
-        font-size: 0.78rem;
-        margin: 0.25rem 0 0;
-        min-height: 1em;
-    }
-
-    .form-card .field .error-text ul {
-        margin: 0.2rem 0 0 1rem;
-        padding: 0;
-    }
-
-    .form-card .field .error-text ul li {
-        list-style: disc;
-    }
-
-    /* ============================================================
-       PASSWORD STRENGTH (Step 4 only)
-       ============================================================ */
-
-    .password-strength {
-        display: flex;
-        gap: 0.3rem;
-        margin-top: 0.4rem;
-    }
-
-    .password-strength .bar {
-        flex: 1;
-        height: 4px;
-        border-radius: 4px;
-        background: var(--border);
-        transition: background 0.3s;
-    }
-
-    .password-strength .bar.active-weak   { background: #c0392b; }
+    .form-card .field textarea::placeholder { color: var(--text-muted); opacity: 0.6; font-weight: 400; }
+    .form-card .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.8rem; }
+    .form-card .field .hint { font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0; line-height: 1.4; }
+    .form-card .field .error-text { color: #c0392b; font-size: 0.78rem; margin: 0.25rem 0 0; min-height: 1em; }
+    .form-card .field .error-text ul { margin: 0.2rem 0 0 1rem; padding: 0; }
+    .form-card .field .error-text ul li { list-style: disc; }
+    .password-strength { display: flex; gap: 0.3rem; margin-top: 0.4rem; }
+    .password-strength .bar { flex: 1; height: 4px; border-radius: 4px; background: var(--border); transition: background 0.3s; }
+    .password-strength .bar.active-weak { background: #c0392b; }
     .password-strength .bar.active-medium { background: #f39c12; }
     .password-strength .bar.active-strong { background: var(--positive); }
-
-    .password-hint {
-        display: flex;
-        flex-direction: column;
-        gap: 0.15rem;
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 0.4rem;
-        line-height: 1.4;
-    }
-
-    .password-hint .valid   { color: var(--positive); }
+    .password-hint { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.4; }
+    .password-hint .valid { color: var(--positive); }
     .password-hint .invalid { color: #c0392b; }
-
-    /* ============================================================
-       CHECKBOXES (Step 4)
-       ============================================================ */
-
-    .checkbox-field {
-        margin-bottom: 1rem;
-    }
-
-    .checkbox-field > label {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        margin: 0;
-        padding: 0;
-        cursor: pointer;
-        font-size: 0.88rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--text);
-    }
-
-    .checkbox-field input[type="checkbox"] {
-        appearance: none;
-        -webkit-appearance: none;
-        width: 18px;
-        height: 18px;
-        min-width: 18px;
-        min-height: 18px;
-        margin: 2px 0 0;
-        padding: 0;
-        border: 1.5px solid var(--border-strong);
-        border-radius: 5px;
-        background: var(--bg-alt);
-        cursor: pointer;
-        display: inline-grid;
-        place-content: center;
-        flex: 0 0 18px;
-        box-sizing: border-box;
-        transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .checkbox-field input[type="checkbox"]:checked {
-        background: var(--accent);
-        border-color: var(--accent);
-    }
-
-    .checkbox-field input[type="checkbox"]:checked::before {
-        content: "";
-        width: 9px;
-        height: 5px;
-        border-left: 2px solid #fff;
-        border-bottom: 2px solid #fff;
-        transform: rotate(-45deg) translateY(-1px);
-    }
-
-    .checkbox-field input[type="checkbox"]:focus {
-        outline: none;
-        box-shadow: 0 0 0 4px var(--accent-soft);
-    }
-
-    .checkbox-field input[type="checkbox"]:invalid {
-        border-color: #c0392b;
-    }
-
-    .checkbox-field label a {
-        color: var(--accent);
-        font-weight: 600;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-    }
-
-    .checkbox-field label a:hover {
-        opacity: 0.8;
-    }
-
-    .checkbox-field .error-text {
-        margin-left: 30px;
-        margin-top: 0.35rem;
-    }
-
-    /* ============================================================
-       BUTTONS
-       ============================================================ */
-
-    .form-card .btn-row {
-        margin-top: 1.5rem;
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .form-card .btn-row .btn {
-        flex: 1;
-        min-width: 120px;
-    }
-
-    .form-card .btn-row .btn--secondary {
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        color: var(--text);
-    }
-
-    .form-card .btn-row .btn--secondary:hover {
-        background: var(--surface);
-        border-color: var(--border-strong);
-    }
-
-    /* ============================================================
-       FORM NOTE
-       ============================================================ */
-
-    .form-card .form-note {
-        margin-top: 1.25rem;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        background: var(--surface-2);
-        border: 1px dashed var(--border-strong);
-        border-radius: 12px;
-        padding: 0.8rem 1rem;
-        line-height: 1.5;
-    }
-
-    /* ============================================================
-       ALREADY LOGGED IN
-       ============================================================ */
-
-    .already-logged-in {
-        text-align: center;
-        padding: 2.5rem 2rem;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .already-logged-in .icon {
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .already-logged-in h3 {
-        margin: 0.5rem 0 0.3rem;
-    }
-
-    .already-logged-in p {
-        color: var(--text-muted);
-        margin: 0 0 1.25rem;
-    }
-
-    /* ============================================================
-       RESPONSIVE
-       ============================================================ */
-
+    .checkbox-field { margin-bottom: 1rem; }
+    .checkbox-field > label { display: flex; align-items: flex-start; gap: 0.75rem; margin: 0; padding: 0; cursor: pointer; font-size: 0.88rem; font-weight: 400; line-height: 1.5; color: var(--text); }
+    .checkbox-field input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; min-width: 18px; min-height: 18px; margin: 2px 0 0; padding: 0; border: 1.5px solid var(--border-strong); border-radius: 5px; background: var(--bg-alt); cursor: pointer; display: inline-grid; place-content: center; flex: 0 0 18px; box-sizing: border-box; transition: background 0.2s, border-color 0.2s, box-shadow 0.2s; }
+    .checkbox-field input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+    .checkbox-field input[type="checkbox"]:checked::before { content: ""; width: 9px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }
+    .checkbox-field input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 4px var(--accent-soft); }
+    .checkbox-field input[type="checkbox"]:invalid { border-color: #c0392b; }
+    .checkbox-field label a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .checkbox-field label a:hover { opacity: 0.8; }
+    .checkbox-field .error-text { margin-left: 30px; margin-top: 0.35rem; }
+    .form-card .btn-row { margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .form-card .btn-row .btn { flex: 1; min-width: 120px; }
+    .form-card .btn-row .btn--secondary { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); }
+    .form-card .btn-row .btn--secondary:hover { background: var(--surface); border-color: var(--border-strong); }
+    .form-card .form-note { margin-top: 1.25rem; font-size: 0.8rem; color: var(--text-muted); background: var(--surface-2); border: 1px dashed var(--border-strong); border-radius: 12px; padding: 0.8rem 1rem; line-height: 1.5; }
+    .already-logged-in { text-align: center; padding: 2.5rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+    .already-logged-in .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+    .already-logged-in h3 { margin: 0.5rem 0 0.3rem; }
+    .already-logged-in p { color: var(--text-muted); margin: 0 0 1.25rem; }
     @media (max-width: 640px) {
         .step-progress { gap: 0.3rem; }
         .step-progress .step-dot { font-size: 0.7rem; }
         .step-progress .step-dot .dot { width: 24px; height: 24px; font-size: 0.65rem; }
         .step-progress .step-line { flex: 0 0 16px; }
-
         .form-card .field input:not([type="checkbox"]):not([type="radio"]),
         .form-card .field select,
-        .form-card .field textarea {
-            min-height: 44px;
-            padding: 0.6rem 0.9rem;
-            font-size: 0.9rem;
-        }
-
+        .form-card .field textarea { min-height: 44px; padding: 0.6rem 0.9rem; font-size: 0.9rem; }
         .form-card .btn-row { flex-direction: column; }
         .form-card .btn-row .btn { width: 100%; }
-
-        .checkbox-field input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            min-width: 18px;
-            min-height: 18px;
-        }
+        .checkbox-field input[type="checkbox"] { width: 18px; height: 18px; min-width: 18px; min-height: 18px; }
         .checkbox-field > label { font-size: 0.84rem; }
         .already-logged-in { padding: 2rem 1.25rem; }
     }
-
-    /* ============================================================
-       DARK MODE
-       ============================================================ */
-
     :root[data-theme="dark"] .form-card .field input:not([type="checkbox"]):not([type="radio"]),
     :root[data-theme="dark"] .form-card .field select,
-    :root[data-theme="dark"] .form-card .field textarea {
-        background: var(--surface-2);
-        border-color: var(--border);
-    }
-
+    :root[data-theme="dark"] .form-card .field textarea { background: var(--surface-2); border-color: var(--border); }
     :root[data-theme="dark"] .form-card .field input:not([type="checkbox"]):not([type="radio"]):focus,
     :root[data-theme="dark"] .form-card .field select:focus,
-    :root[data-theme="dark"] .form-card .field textarea:focus {
-        background: var(--bg);
-        border-color: var(--accent);
-        box-shadow: 0 0 0 4px var(--accent-soft);
-    }
-
-    :root[data-theme="dark"] .checkbox-field input[type="checkbox"] {
-        background: var(--surface-2);
-        border-color: var(--border-strong);
-    }
-    :root[data-theme="dark"] .checkbox-field input[type="checkbox"]:checked {
-        background: var(--accent);
-        border-color: var(--accent);
-    }
-
-    :root[data-theme="dark"] .form-card .btn-row .btn--secondary {
-        background: var(--surface-2);
-        border-color: var(--border);
-        color: var(--text);
-    }
-    :root[data-theme="dark"] .form-card .btn-row .btn--secondary:hover {
-        background: var(--surface);
-        border-color: var(--border-strong);
-    }
+    :root[data-theme="dark"] .form-card .field textarea:focus { background: var(--bg); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+    :root[data-theme="dark"] .checkbox-field input[type="checkbox"] { background: var(--surface-2); border-color: var(--border-strong); }
+    :root[data-theme="dark"] .checkbox-field input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+    :root[data-theme="dark"] .form-card .btn-row .btn--secondary { background: var(--surface-2); border-color: var(--border); color: var(--text); }
+    :root[data-theme="dark"] .form-card .btn-row .btn--secondary:hover { background: var(--surface); border-color: var(--border-strong); }
 </style>
 {% endblock %}
 
 {% block content %}
-
 <section class="page-hero">
     <div class="container">
         <p class="breadcrumb">
@@ -424,9 +102,7 @@
 
 <section class="section">
     <div class="container">
-
         {% if user.is_authenticated %}
-            <!-- Already logged in -->
             <div class="already-logged-in">
                 <div class="icon" aria-hidden="true">✓</div>
                 <h3>You're already signed in</h3>
@@ -436,14 +112,11 @@
                     <a href="{% url 'logout' %}" class="btn btn--outline">Sign Out</a>
                 </div>
             </div>
-
         {% else %}
-            <!-- Registration form -->
             <form class="form-card" method="post" action="{% url 'register' %}" novalidate id="registration-form">
                 {% csrf_token %}
                 <input type="hidden" name="step" value="{{ step }}">
 
-                <!-- Step Progress -->
                 <div class="step-progress">
                     {% for i in "1234"|make_list %}
                         <div class="step-dot
@@ -460,7 +133,6 @@
                     {% endfor %}
                 </div>
 
-                <!-- Step Heading -->
                 <p class="eyebrow" style="margin-bottom:.2rem;">Step {{ step }} of 4</p>
                 <h2 class="display" style="font-size:clamp(1.5rem,2.6vw,2rem);">
                     {% if step == 1 %}Personal Information
@@ -475,16 +147,12 @@
                     {% else %}Review your information before submitting.{% endif %}
                 </p>
 
-                <!-- Non‑field errors -->
                 {% if form.non_field_errors %}
                     <div class="error-text" role="alert" style="margin-bottom:1rem;">
                         {{ form.non_field_errors }}
                     </div>
                 {% endif %}
 
-                <!-- ============================================================
-                     STEP 1: Personal Information
-                     ============================================================ -->
                 {% if step == 1 %}
                     <div class="field">
                         <label for="{{ form.first_name.id_for_label }}">First Name</label>
@@ -502,24 +170,21 @@
                         {{ form.middle_name.errors }}
                     </div>
                     <div class="field">
-                        <label for="{{ form.username.id_for_label }}">Username</label>
+                        <label for="{{ form.username.id_for_label }}">user_name</label>
                         {{ form.username }}
                         {% if form.username.help_text %}<p class="hint">{{ form.username.help_text }}</p>{% endif %}
                         {{ form.username.errors }}
                     </div>
 
-                <!-- ============================================================
-                     STEP 2: Contact Details
-                     ============================================================ -->
                 {% elif step == 2 %}
                     <div class="field">
-                        <label for="{{ form.email.id_for_label }}">Email Address</label>
+                        <label for="{{ form.email.id_for_label }}">Email</label>
                         {{ form.email }}
                         {% if form.email.help_text %}<p class="hint">{{ form.email.help_text }}</p>{% endif %}
                         {{ form.email.errors }}
                     </div>
                     <div class="field">
-                        <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+                        <label for="{{ form.phone.id_for_label }}">Phone</label>
                         {{ form.phone }}
                         {% if form.phone.help_text %}<p class="hint">{{ form.phone.help_text }}</p>{% endif %}
                         {{ form.phone.errors }}
@@ -531,33 +196,27 @@
                         {{ form.country.errors }}
                     </div>
 
-                <!-- ============================================================
-                     STEP 3: Account Preferences (PIN only, no password)
-                     ============================================================ -->
                 {% elif step == 3 %}
                     <div class="field">
-                        <label for="{{ form.currency.id_for_label }}">Currency</label>
+                        <label for="{{ form.currency.id_for_label }}">Preferred currency</label>
                         {{ form.currency }}
                         {{ form.currency.errors }}
                     </div>
                     <div class="field">
-                        <label for="{{ form.account_type.id_for_label }}">Account Type</label>
+                        <label for="{{ form.account_type.id_for_label }}">Account type</label>
                         {{ form.account_type }}
                         {{ form.account_type.errors }}
                     </div>
                     <div class="field" data-field="transaction_pin">
-                        <label for="{{ form.transaction_pin.id_for_label }}">Transaction PIN</label>
+                        <label for="{{ form.transaction_pin.id_for_label }}">4-digit P_I_N</label>
                         {{ form.transaction_pin }}
-                        <p class="hint">A 4‑digit numeric PIN for authorising transactions.</p>
+                        <p class="hint">A 4‑digit numeric P_I_N for authorising transactions.</p>
                         {{ form.transaction_pin.errors }}
                     </div>
 
-                <!-- ============================================================
-                     STEP 4: Security (Password + Confirm + Terms)
-                     ============================================================ -->
                 {% elif step == 4 %}
                     <div class="field" data-field="password">
-                        <label for="{{ form.password.id_for_label }}">Password</label>
+                        <label for="{{ form.password.id_for_label }}">pass****</label>
                         {{ form.password }}
                         <div class="password-strength">
                             <span class="bar"></span>
@@ -573,13 +232,11 @@
                         </div>
                         {{ form.password.errors }}
                     </div>
-
                     <div class="field" data-field="confirm_password">
-                        <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+                        <label for="{{ form.confirm_password.id_for_label }}">Confirm pass****</label>
                         {{ form.confirm_password }}
                         {{ form.confirm_password.errors }}
                     </div>
-
                     <div class="checkbox-field" data-field="terms_accepted">
                         <label for="{{ form.terms_accepted.id_for_label }}">
                             {{ form.terms_accepted }}
@@ -590,7 +247,6 @@
                         </label>
                         {{ form.terms_accepted.errors }}
                     </div>
-
                     <div class="checkbox-field" data-field="privacy_accepted">
                         <label for="{{ form.privacy_accepted.id_for_label }}">
                             {{ form.privacy_accepted }}
@@ -601,12 +257,8 @@
                         </label>
                         {{ form.privacy_accepted.errors }}
                     </div>
-
                 {% endif %}
 
-                <!-- ============================================================
-                     BUTTONS – "Continue" appears BEFORE "Back"
-                     ============================================================ -->
                 <div class="btn-row">
                     <button class="btn btn--primary" type="submit" style="flex:2;">
                         {% if step < 4 %}
@@ -621,7 +273,6 @@
                             </svg>
                         {% endif %}
                     </button>
-
                     {% if step > 1 %}
                         <button type="submit" name="back" value="1" class="btn btn--secondary">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-right:0.3rem;">
@@ -632,24 +283,17 @@
                     {% endif %}
                 </div>
 
-                <!-- ============================================================
-                     SECURITY NOTE – rephrased to be more reassuring
-                     ============================================================ -->
                 <p class="form-note">
                     <strong>Your information is protected.</strong>
                     All data you provide is encrypted and handled securely.
                     We respect your privacy and do not share your information with third parties.
                     <a href="{% url 'security' %}#privacy" style="color:var(--accent);">View our privacy policy</a>.
                 </p>
-
             </form>
         {% endif %}
     </div>
 </section>
 
-<!-- ================================================================
-     CTA BAND
-     ================================================================ -->
 <section class="section cta-band">
     <div class="container">
         <h2 class="display">Ready to Take the Next Step?</h2>
@@ -673,7 +317,6 @@
         </div>
     </div>
 </section>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -682,24 +325,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('registration-form');
     if (!form) return;
 
-    /* ============================================================
-       STEP 4: PASSWORD STRENGTH & MATCH
-       ============================================================ */
     const pwField = form.querySelector('input[name="password"], input[name="password1"]');
     const confirmField = form.querySelector('input[name="confirm_password"], input[name="password2"]');
-
     if (pwField) {
         pwField.type = 'password';
         pwField.minLength = 8;
         pwField.required = true;
         pwField.autocomplete = 'new-password';
         if (!pwField.placeholder) pwField.placeholder = 'Minimum 8 characters';
-
         const container = pwField.closest('.field');
         if (container) {
             const strengthBars = container.querySelectorAll('.password-strength .bar');
             const hintItems = container.querySelectorAll('.password-hint span');
-
             pwField.addEventListener('input', function () {
                 const val = this.value;
                 const reqs = {
@@ -709,16 +346,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     digit: /\d/.test(val),
                     special: /[!@#$%^&*(),.?":{}|<>]/.test(val)
                 };
-
-                // Update hints
                 hintItems.forEach(item => {
                     const key = item.dataset.req;
                     const ok = reqs[key];
                     item.classList.toggle('valid', ok);
                     item.classList.toggle('invalid', !ok);
                 });
-
-                // Update bars
                 const score = Object.values(reqs).filter(Boolean).length;
                 strengthBars.forEach((bar, idx) => {
                     bar.className = 'bar';
@@ -727,8 +360,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         bar.classList.add(cls);
                     }
                 });
-
-                // Re‑check password match
                 if (confirmField && confirmField.value && confirmField.value !== val) {
                     confirmField.setCustomValidity('Passwords do not match.');
                 } else if (confirmField) {
@@ -737,13 +368,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
-
     if (confirmField) {
         confirmField.type = 'password';
         confirmField.required = true;
         confirmField.autocomplete = 'new-password';
-        if (!confirmField.placeholder) confirmField.placeholder = 'Confirm your password';
-
+        if (!confirmField.placeholder) confirmField.placeholder = 'Confirm your pass****';
         confirmField.addEventListener('input', function () {
             if (pwField && this.value && this.value !== pwField.value) {
                 this.setCustomValidity('Passwords do not match.');
@@ -753,9 +382,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ============================================================
-       STEP 3: PIN – 4 digits only
-       ============================================================ */
     const pinField = form.querySelector('input[name="transaction_pin"], input[name="pin"], input[name="pin_number"]');
     if (pinField) {
         pinField.type = 'password';
@@ -765,23 +391,19 @@ document.addEventListener('DOMContentLoaded', function () {
         pinField.required = true;
         pinField.autocomplete = 'off';
         if (!pinField.placeholder) pinField.placeholder = '••••';
-
         pinField.addEventListener('input', function () {
             this.value = this.value.replace(/\D/g, '').slice(0, 4);
             this.setCustomValidity('');
         });
         pinField.addEventListener('blur', function () {
             if (this.value.length !== 4) {
-                this.setCustomValidity('PIN must be exactly 4 digits.');
+                this.setCustomValidity('P_I_N must be exactly 4 digits.');
             } else {
                 this.setCustomValidity('');
             }
         });
     }
 
-    /* ============================================================
-       STEP 2: COUNTRY – add default placeholder if missing
-       ============================================================ */
     const countrySelect = form.querySelector('select[name="country"]');
     if (countrySelect) {
         countrySelect.required = true;
@@ -796,15 +418,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /* ============================================================
-       STEP 2: PHONE – basic formatting
-       ============================================================ */
     const phoneField = form.querySelector('input[name="phone"], input[name="phone_number"]');
     if (phoneField) {
         phoneField.type = 'tel';
         phoneField.required = true;
         phoneField.autocomplete = 'tel';
-        phoneField.pattern = '[0-9+\\-\\(\\) ]+';
+        phoneField.pattern = '[0-9+\\-() ]+';
         phoneField.minLength = 10;
         phoneField.maxLength = 20;
         if (!phoneField.placeholder) phoneField.placeholder = '+1 (123) 456-7890';
@@ -813,9 +432,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ============================================================
-       STEP 2: EMAIL – set type and placeholder
-       ============================================================ */
     const emailField = form.querySelector('input[name="email"]');
     if (emailField) {
         emailField.type = 'email';
@@ -824,16 +440,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!emailField.placeholder) emailField.placeholder = 'name@example.com';
     }
 
-    /* ============================================================
-       SUBMIT – allow Back button without validation
-       ============================================================ */
     form.addEventListener('submit', function (e) {
         const submitter = e.submitter;
         if (submitter && submitter.name === 'back') {
-            // Do not prevent default, let it submit.
             return;
         }
-        // Otherwise, let the browser handle validation.
     });
 });
 </script>
