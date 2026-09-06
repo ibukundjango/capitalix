@@ -3,7 +3,9 @@
 
 {% block title %}Dashboard | Capitalix{% endblock %}
 
-{% block meta_description %}Manage your Capitalix accounts, view transactions, and access banking tools from your secure online dashboard.{% endblock %}
+{% block meta_description %}
+    Manage your Capitalix accounts, view activity, and access tools from your secure dashboard.
+{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -580,7 +582,7 @@
     }
 
     /* ============================================================
-       KYC FORM OVERRIDES
+       VERIFICATION FORM OVERRIDES
        ============================================================ */
     .kyc-form .field-group {
         display: grid;
@@ -727,13 +729,6 @@
     .quick-action .link-arrow {
         font-size: 0.85rem;
     }
-
-    /* ============================================================
-       SAFE BROWSING – ensure no suspicious patterns
-       ============================================================ */
-    .no-suspicious-content {
-        display: none;
-    }
 </style>
 {% endblock %}
 
@@ -756,7 +751,7 @@
                 </div>
 
                 <!-- Navigation -->
-                <nav class="sidebar-nav" aria-label="Main banking navigation">
+                <nav class="sidebar-nav" aria-label="Main navigation">
 
                     <p class="nav-section-title">Main</p>
 
@@ -782,7 +777,7 @@
                             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
                             </svg>
-                            <span class="nav-label">Transactions</span>
+                            <span class="nav-label">Activity</span>
                         </a>
 
                         <a href="{% url 'transfer' %}" class="nav-item">
@@ -790,7 +785,7 @@
                                 <path d="M3 12h18M3 6h18M3 18h18"/>
                                 <path d="M7 6v4M17 14v4"/>
                             </svg>
-                            <span class="nav-label">Transfer Money</span>
+                            <span class="nav-label">Transfer Funds</span>
                         </a>
 
                         <a href="{% url 'statement_form' %}" class="nav-item">
@@ -887,7 +882,7 @@
                             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
                             </svg>
-                            <span class="nav-label">Transactions</span>
+                            <span class="nav-label">Activity</span>
                         </span>
 
                         <span class="nav-item nav-link--disabled">
@@ -895,7 +890,7 @@
                                 <path d="M3 12h18M3 6h18M3 18h18"/>
                                 <path d="M7 6v4M17 14v4"/>
                             </svg>
-                            <span class="nav-label">Transfer Money</span>
+                            <span class="nav-label">Transfer Funds</span>
                         </span>
 
                         <span class="nav-item nav-link--disabled">
@@ -1087,7 +1082,7 @@
                             <p class="eyebrow">Verification Required</p>
                             <div>
                                 <h2 style="margin:0.25rem 0 0.4rem;">Complete your identity verification</h2>
-                                <p class="muted" style="margin:0;">Before you can access your accounts, transfers, transactions, and statements, you need to complete identity verification.</p>
+                                <p class="muted" style="margin:0;">Before you can access your accounts, transfers, activity, and statements, you need to complete identity verification.</p>
                             </div>
 
                         {% endif %}
@@ -1098,7 +1093,7 @@
 
                         <!-- Under Review -->
                         <div class="dashboard-card" style="text-align:center; padding:2.5rem 2rem;">
-                            <p class="eyebrow">KYC Verification</p>
+                            <p class="eyebrow">Identity Verification</p>
                             <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Application Under Review</h2>
                             <p class="muted" style="margin:0.5rem 0;">Thank you for submitting your verification documents. Our team is currently reviewing your application.</p>
                             <p class="muted">Please check back later for updates.</p>
@@ -1109,12 +1104,12 @@
 
                     {% else %}
 
-                        <!-- KYC Form with masked sensitive terms -->
+                        <!-- Identity Verification Form -->
                         <div class="dashboard-card" id="kyc-form">
 
-                            <p class="eyebrow">KYC Verification</p>
+                            <p class="eyebrow">Identity Verification</p>
                             <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Account Verification</h2>
-                            <p class="muted">To comply with regulations, please provide your information to complete the verification process.</p>
+                            <p class="muted">To complete the process, please provide the required information below.</p>
 
                             {% if profile.kyc_status == 'REJECTED' and kyc_profile.rejection_reason %}
                                 <div class="alert" style="margin-top:1rem;border-left-color:#b91c1c;">
@@ -1181,7 +1176,7 @@
                                 <div class="field-group">
 
                                     <div class="field">
-                                        <label for="{{ kyc_form.government_id.id_for_label }}">National ID / S_S_N</label>
+                                        <label for="{{ kyc_form.government_id.id_for_label }}">Government ID Number</label>
                                         {{ kyc_form.government_id }}
                                         {{ kyc_form.government_id.errors }}
                                     </div>
@@ -1375,13 +1370,13 @@
 
                         <!-- Transfer Button Under Balance -->
                         <div class="balance-transfer-row" style="margin-bottom:2rem;">
-                            <span class="transfer-label">Need to move money?</span>
+                            <span class="transfer-label">Need to move funds?</span>
                             <a href="{% url 'transfer' %}" class="transfer-btn">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                     <path d="M3 12h18M3 6h18M3 18h18"/>
                                     <path d="M7 6v4M17 14v4"/>
                                 </svg>
-                                Transfer Money
+                                Transfer Funds
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                     <polyline points="9 6 15 12 9 18"/>
                                 </svg>
@@ -1395,7 +1390,7 @@
 
                         <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
                             <div>
-                                <p class="eyebrow">Banking Accounts</p>
+                                <p class="eyebrow">Accounts</p>
                                 <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:0.35rem;">My Accounts</h2>
                                 <p class="muted small" style="margin:0;">View your Capitalix accounts and balances.</p>
                             </div>
@@ -1439,8 +1434,8 @@
 
                             <div class="dashboard-card" style="text-align:center; padding:2.5rem 2rem;">
                                 <p class="eyebrow">No Accounts</p>
-                                <h3>No bank accounts yet</h3>
-                                <p class="muted">Your banking accounts will appear here once they are created.</p>
+                                <h3>No accounts yet</h3>
+                                <p class="muted">Your accounts will appear here once they are created.</p>
                                 <a href="{% url 'open_account_public' %}" class="btn btn--primary" style="margin-top:1rem;">Open an Account</a>
                             </div>
 
@@ -1473,8 +1468,8 @@
 
                             <a href="{% url 'transfer' %}" class="quick-action">
                                 <p class="eyebrow">Transfers</p>
-                                <h3>Transfer Money</h3>
-                                <p>Move money between eligible Capitalix accounts.</p>
+                                <h3>Transfer Funds</h3>
+                                <p>Move funds between eligible Capitalix accounts.</p>
                                 <span class="link-arrow">
                                     Make a Transfer
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -1489,7 +1484,7 @@
                                 <h3>Transaction History</h3>
                                 <p>Review recent deposits, withdrawals, and transfers.</p>
                                 <span class="link-arrow">
-                                    View Transactions
+                                    View Activity
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                         <path d="M5 12h13"/>
                                         <path d="M13 6.5 18.5 12 13 17.5"/>
@@ -1507,7 +1502,7 @@
                         <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
                             <div>
                                 <p class="eyebrow">Account Activity</p>
-                                <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Recent Transactions</h2>
+                                <h2 class="display" style="font-size:clamp(1.6rem,3vw,2.2rem);">Recent Activity</h2>
                             </div>
                         </div>
 
@@ -1540,8 +1535,8 @@
 
                             <div class="dashboard-card" style="text-align:center; padding:2.5rem 2rem;">
                                 <p class="eyebrow">Account Activity</p>
-                                <h3>No transactions yet</h3>
-                                <p class="muted">Your recent banking activity will appear here.</p>
+                                <h3>No activity yet</h3>
+                                <p class="muted">Your recent activity will appear here.</p>
                             </div>
 
                         {% endif %}
@@ -1561,15 +1556,15 @@
                             <div class="dashboard-card" style="margin-bottom:0;">
                                 <p class="eyebrow">Account Records</p>
                                 <h3 style="font-size:1.2rem;">Monthly Statements</h3>
-                                <p class="muted small">Review your account statements and historical banking activity.</p>
+                                <p class="muted small">Review your account statements and historical activity.</p>
                                 <button type="button" class="btn btn--outline btn--sm" disabled style="opacity:0.6;cursor:not-allowed;">Statements Coming Soon</button>
                             </div>
 
                             <div class="dashboard-card" style="margin-bottom:0;">
-                                <p class="eyebrow">Transaction History</p>
-                                <h3 style="font-size:1.2rem;">Banking Activity</h3>
-                                <p class="muted small">Your recent transactions are shown above. Full statement downloads can be connected here.</p>
-                                <a href="{% url 'transaction_history' %}" class="btn btn--outline btn--sm">View Transactions</a>
+                                <p class="eyebrow">Activity History</p>
+                                <h3 style="font-size:1.2rem;">Recent Activity</h3>
+                                <p class="muted small">Your recent activity is shown above. Full statement downloads can be connected here.</p>
+                                <a href="{% url 'transaction_history' %}" class="btn btn--outline btn--sm">View Activity</a>
                             </div>
 
                         </div>
@@ -1591,8 +1586,8 @@
                             <div class="dashboard-card" style="margin-bottom:0;">
                                 <p class="eyebrow">Security</p>
                                 <h3 style="font-size:1.2rem;">Protect Your Account</h3>
-                                <p class="muted small">Keep your password and account security settings up to date.</p>
-                                <a href="{% url 'password_reset' %}" class="btn btn--outline btn--sm">Change Password</a>
+                                <p class="muted small">Keep your pass**** and account security settings up to date.</p>
+                                <a href="{% url 'password_reset' %}" class="btn btn--outline btn--sm">Change pass****</a>
                             </div>
 
                         </div>
@@ -1602,7 +1597,7 @@
                     <!-- Security Notice -->
                     <div class="form-note" style="margin-top:3rem;padding:1.25rem 1.5rem;">
                         <strong>Security reminder.</strong>
-                        Never share your password, verification codes, transaction PIN, or other account credentials with anyone.
+                        Never share your pass****, verification codes, transaction P_I_N, or other account credentials with anyone.
                         If you notice unexpected activity, contact Capitalix immediately.
                     </div>
 
@@ -1618,7 +1613,7 @@
 <!-- ============================================================
      MOBILE BOTTOM NAVIGATION
      ============================================================ -->
-<nav class="mobile-bottom-nav" aria-label="Mobile banking navigation">
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
 
     <a href="#overview" class="nav-item active" aria-current="page">
         <span class="icon-wrap">
