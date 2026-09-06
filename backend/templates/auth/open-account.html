@@ -11,17 +11,12 @@
 
 {% block extra_head %}
 <style>
-    /* ============================================================
-       OPEN ACCOUNT PAGE – SELECT CARDS
-       ============================================================ */
-
     .select-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 1rem;
         margin-top: 1.5rem;
     }
-
     .select-card {
         position: relative;
         text-align: left;
@@ -38,13 +33,11 @@
         gap: 0.3rem;
         box-shadow: var(--shadow-sm);
     }
-
     .select-card:hover {
         transform: translateY(-4px);
         border-color: var(--accent);
         box-shadow: var(--shadow-md);
     }
-
     .select-card .card-icon {
         width: 44px;
         height: 44px;
@@ -56,20 +49,17 @@
         margin-bottom: 0.5rem;
         flex-shrink: 0;
     }
-
     .select-card h3 {
         font-size: 1.1rem;
         margin: 0;
         font-weight: 600;
     }
-
     .select-card p {
         font-size: 0.88rem;
         color: var(--text-muted);
         margin: 0;
         line-height: 1.4;
     }
-
     .select-card .select-state {
         margin-top: 0.75rem;
         font-size: 0.8rem;
@@ -80,20 +70,15 @@
         gap: 0.3rem;
         transition: gap 0.2s ease;
     }
-
     .select-card:hover .select-state {
         gap: 0.6rem;
     }
-
     .select-card .select-state svg {
         transition: transform 0.2s ease;
     }
-
     .select-card:hover .select-state svg {
         transform: translateX(3px);
     }
-
-    /* Empty state / already logged in */
     .already-logged-in {
         text-align: center;
         padding: 2.5rem 2rem;
@@ -102,52 +87,37 @@
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-sm);
     }
-
     .already-logged-in .icon {
         font-size: 3rem;
         margin-bottom: 0.5rem;
     }
-
     .already-logged-in h3 {
         margin: 0.5rem 0 0.3rem;
     }
-
     .already-logged-in p {
         color: var(--text-muted);
         margin: 0 0 1.25rem;
     }
-
-    /* ============================================================
-       RESPONSIVE
-       ============================================================ */
     @media (max-width: 640px) {
         .select-grid {
             grid-template-columns: 1fr 1fr;
         }
     }
-
     @media (max-width: 480px) {
         .select-grid {
             grid-template-columns: 1fr;
         }
-
         .select-card {
             padding: 1.25rem 1rem;
         }
     }
-
-    /* ============================================================
-       DARK MODE
-       ============================================================ */
     :root[data-theme="dark"] .select-card {
         background: var(--surface);
         border-color: var(--border);
     }
-
     :root[data-theme="dark"] .select-card .card-icon {
         background: var(--accent-soft);
     }
-
     :root[data-theme="dark"] .already-logged-in {
         background: var(--surface);
         border-color: var(--border);
@@ -156,29 +126,20 @@
 {% endblock %}
 
 {% block content %}
-
-<!-- ============================================================
-     HERO
-     ============================================================ -->
 <section class="page-hero">
     <div class="container">
-
         <p class="breadcrumb">
             <a href="{% url 'home' %}">Home</a>
-            &nbsp;/&nbsp;
+             /&nbsp;
             Open an Account
         </p>
-
         <h1 class="display" style="max-width:22ch;">
             Open Your Capitalix Account
         </h1>
-
         <p class="lead" style="max-width:66ch;">
-            Choose an account that fits your financial goals and get started online.
+            Choose an account that fits your goals and get started online.
         </p>
-
         <div class="btn-row" style="margin-top:1.75rem;">
-
             {% if not user.is_authenticated %}
                 <a class="btn btn--primary" href="#accounts">
                     Choose an Account
@@ -194,27 +155,16 @@
                     </a>
                 {% endif %}
             {% endif %}
-
             <a class="btn btn--ghost-light" href="{% url 'contact' %}">
                 Need Help?
             </a>
-
         </div>
-
     </div>
 </section>
 
-<!-- ============================================================
-     ACCOUNT SELECTION
-     ============================================================ -->
 <section class="section" id="accounts">
     <div class="container">
-
         {% if user.is_authenticated %}
-
-            <!-- ============================================================
-                 USER IS ALREADY LOGGED IN
-                 ============================================================ -->
             <div class="already-logged-in">
                 <div class="icon" aria-hidden="true">✅</div>
                 <h3>You're already signed in</h3>
@@ -227,21 +177,13 @@
                     <a href="{% url 'logout' %}" class="btn btn--outline">Sign Out</a>
                 </div>
             </div>
-
         {% else %}
-
-            <!-- ============================================================
-                 GUEST – SHOW ACCOUNT OPTIONS
-                 ============================================================ -->
             <div class="section-head">
                 <p class="eyebrow">Step 1</p>
                 <h2 class="display">Choose your account type</h2>
                 <p class="lead">Select the account that best fits your needs.</p>
             </div>
-
             <div class="select-grid">
-
-                <!-- Checking -->
                 <a class="select-card reveal"
                    href="{% url 'register' %}?new=1&step=1&account_type=checking">
                     <span class="card-icon">
@@ -251,7 +193,7 @@
                         </svg>
                     </span>
                     <h3>Checking</h3>
-                    <p>Everyday banking with digital access and no monthly fees.</p>
+                    <p>Everyday access with digital tools and no monthly fees.</p>
                     <span class="select-state">
                         Select Account
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -259,8 +201,6 @@
                         </svg>
                     </span>
                 </a>
-
-                <!-- Savings -->
                 <a class="select-card reveal"
                    href="{% url 'register' %}?new=1&step=1&account_type=savings">
                     <span class="card-icon">
@@ -277,8 +217,6 @@
                         </svg>
                     </span>
                 </a>
-
-                <!-- Money Market -->
                 <a class="select-card reveal"
                    href="{% url 'register' %}?new=1&step=1&account_type=money_market">
                     <span class="card-icon">
@@ -297,8 +235,6 @@
                         </svg>
                     </span>
                 </a>
-
-                <!-- Certificate -->
                 <a class="select-card reveal"
                    href="{% url 'register' %}?new=1&step=1&account_type=certificate">
                     <span class="card-icon">
@@ -316,8 +252,6 @@
                         </svg>
                     </span>
                 </a>
-
-                <!-- Business -->
                 <a class="select-card reveal"
                    href="{% url 'register' %}?new=1&step=1&account_type=business">
                     <span class="card-icon">
@@ -336,22 +270,14 @@
                         </svg>
                     </span>
                 </a>
-
             </div>
-
         {% endif %}
-
     </div>
 </section>
 
-<!-- ============================================================
-     CTA
-     ============================================================ -->
 <section class="section cta-band">
     <div class="container">
-
         <h2 class="display">Ready to Take the Next Step?</h2>
-
         <p class="lead" style="margin:0 auto 1.75rem;">
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
@@ -363,9 +289,7 @@
                 Open an account and experience a simpler way to manage your money.
             {% endif %}
         </p>
-
         <div class="btn-row">
-
             {% if not user.is_authenticated %}
                 <a class="btn btn--primary" href="#accounts">
                     Choose an Account
@@ -381,14 +305,10 @@
                     </a>
                 {% endif %}
             {% endif %}
-
             <a class="btn btn--ghost-light" href="{% url 'contact' %}">
                 Contact Us
             </a>
-
         </div>
-
     </div>
 </section>
-
 {% endblock %}
