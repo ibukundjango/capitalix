@@ -5,23 +5,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#061428">
-
-    <title>{% block title %}Capitalix Bank | Modern Banking, Built Around You{% endblock %}</title>
+    <title>{% block title %}Capitalix | Modern Platform Built Around You{% endblock %}</title>
     <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
-
     <meta
         name="description"
-        content="{% block meta_description %}Capitalix is a modern financial platform for everyday banking, business accounts, and lending, built around your goals.{% endblock %}"
+        content="{% block meta_description %}Capitalix is a modern platform for everyday accounts, business tools, and lending, built around your goals.{% endblock %}"
     >
-
-    <meta property="og:title" content="{% block og_title %}Capitalix | Modern Banking, Built Around You{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Modern banking built around your financial goals.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Capitalix | Modern Platform Built Around You{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Modern platform built around your goals.{% endblock %}">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-
-    <!-- TODO: add real favicon set (static/images/favicon.ico + apple-touch-icon) -->
     <link rel="icon" href="{% static 'images/favicon.ico' %}">
-
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,9 +23,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500&display=swap"
         rel="stylesheet"
     >
-
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-
     <!-- Mobile header alignment fix -->
     <style>
         @media (max-width: 768px) {
@@ -51,7 +43,6 @@
             }
         }
     </style>
-
     <script>
         (function () {
             try {
@@ -63,26 +54,20 @@
             } catch (e) {}
         })();
     </script>
-
     {% block extra_head %}{% endblock %}
 </head>
-
 <body class="{% block body_class %}{% endblock %}">
-
 <div id="global-spinner" class="spinner-overlay" style="display:none;">
     <div class="spinner"></div>
 </div>
-
 <a class="skip-link" href="#main">Skip to main content</a>
-
 <!-- HEADER -->
 <header class="site-header">
     <div class="container header-inner">
         <a class="brand" href="{% url 'home' %}" aria-label="Capitalix home">
             <span class="brand-mark" aria-hidden="true">C</span>
-            <span class="brand-name">Capitalix Bank</span>
+            <span class="brand-name">Capitalix</span>
         </a>
-
         <nav class="nav" aria-label="Primary">
             <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>Home</a>
             <a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>
@@ -92,7 +77,6 @@
             <a href="{% url 'resources' %}" {% if request.resolver_match.url_name == 'resources' %}aria-current="page"{% endif %}>Resources</a>
             <a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
         </nav>
-
         <div class="header-actions">
             <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode">
                 <span class="icon-sun">
@@ -107,9 +91,7 @@
                     </svg>
                 </span>
             </button>
-
             {% if user.is_authenticated %}
-
                 <a href="{% url 'notification_list' %}" class="nav-login desktop-only notif-link" aria-label="Notifications">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
@@ -119,22 +101,16 @@
                         <span class="notif-badge">{{ unread_notifications_count }}</span>
                     {% endif %}
                 </a>
-
                 {% if user.is_staff %}
                     <a class="nav-login desktop-only" href="{% url 'staff_dashboard' %}">Staff Dashboard</a>
                 {% else %}
                     <a class="nav-login desktop-only" href="{% url 'dashboard' %}">Dashboard</a>
                 {% endif %}
-
                 <a class="btn btn--outline btn--sm desktop-only" href="{% url 'logout' %}">Logout</a>
-
             {% else %}
-
                 <a class="nav-login desktop-only" href="{% url 'login' %}">Login</a>
                 <a class="btn btn--primary btn--sm desktop-only" href="{% url 'open_account_public' %}">Open an Account</a>
-
             {% endif %}
-
             <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                     <path d="M4 7h16M4 12h16M4 17h16"/>
@@ -142,7 +118,6 @@
             </button>
         </div>
     </div>
-
     <!-- MOBILE MENU -->
     <div class="mobile-menu" id="mobile-menu">
         <div class="container">
@@ -154,7 +129,6 @@
                 <a class="m-link" href="{% url 'loans' %}" {% if request.resolver_match.url_name == 'loans' %}aria-current="page"{% endif %}>Loans</a>
                 <a class="m-link" href="{% url 'resources' %}" {% if request.resolver_match.url_name == 'resources' %}aria-current="page"{% endif %}>Resources</a>
                 <a class="m-link" href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
-
                 {% if user.is_authenticated %}
                     <a class="m-link m-link--row" href="{% url 'notification_list' %}">
                         <span class="m-link-label">
@@ -170,7 +144,6 @@
                     </a>
                 {% endif %}
             </nav>
-
             <div class="btn-row">
                 {% if user.is_authenticated %}
                     {% if user.is_staff %}
@@ -187,7 +160,6 @@
         </div>
     </div>
 </header>
-
 <!-- CONTENT -->
 <main id="main">
     {% if messages %}
@@ -199,10 +171,8 @@
             {% endfor %}
         </div>
     {% endif %}
-
     {% block content %}{% endblock %}
 </main>
-
 <!-- FOOTER -->
 <footer class="site-footer">
     <div class="container">
@@ -212,15 +182,14 @@
                     <span class="brand-mark" aria-hidden="true">C</span>
                     <span class="brand-name">Capitalix</span>
                 </a>
-                <p class="footer-about">Modern banking built around your financial goals.</p>
+                <p class="footer-about">Modern platform built around your goals.</p>
                 <ul class="footer-trust">
                     <li>256‑bit SSL encryption</li>
-                    <li>Bank‑grade security</li>
+                    <li>Strong security</li>
                 </ul>
             </div>
-
             <div>
-                <h3>Personal Banking</h3>
+                <h3>Personal</h3>
                 <ul>
                     <li><a href="{% url 'personal' %}">Checking</a></li>
                     <li><a href="{% url 'personal' %}">Savings</a></li>
@@ -229,7 +198,6 @@
                     <li><a href="{% url 'loans' %}">Personal Loans</a></li>
                 </ul>
             </div>
-
             <div>
                 <h3>Business</h3>
                 <ul>
@@ -239,7 +207,6 @@
                     <li><a href="{% url 'business' %}">Merchant Services</a></li>
                 </ul>
             </div>
-
             <div>
                 <h3>Resources</h3>
                 <ul>
@@ -250,7 +217,6 @@
                     <li><a href="{% url 'security' %}">Security Center</a></li>
                 </ul>
             </div>
-
             <div>
                 <h3>Company</h3>
                 <ul>
@@ -260,25 +226,22 @@
                     <li><a href="{% url 'contact' %}#locations">Locations</a></li>
                 </ul>
             </div>
-
             <div>
                 <h3>Support</h3>
                 <ul>
                     <li><a href="mailto:admin@capitalixbank.com">admin@capitalixbank.com</a></li>
                     <li><a href="tel:+10000000000">+1 (000) 000-0000</a></li>
                     <li><a href="{% url 'contact' %}#hours">Support Hours</a></li>
-                    <li><a href="{% url 'online-banking' %}">Online Banking</a></li>
+                    <li><a href="{% url 'online-banking' %}">Online Access</a></li>
                 </ul>
             </div>
         </div>
-
         <div class="footer-disclosure">
             <p>
-                Capitalix provides personalised banking solutions designed to support your financial growth.
-                We are committed to transparency, security, and helping you achieve your financial goals.
+                Capitalix provides personalised solutions designed to support your goals.
+                We are committed to transparency, security, and helping you achieve your objectives.
             </p>
         </div>
-
         <div class="footer-bottom">
             <nav aria-label="Legal">
                 <a href="{% url 'security' %}#privacy">Privacy Policy</a>
@@ -290,10 +253,8 @@
         </div>
     </div>
 </footer>
-
 <script src="{% static 'js/main.js' %}"></script>
 {% block extra_js %}{% endblock %}
-
 <!-- SUPPORT CHAT WIDGET -->
 <div id="support-chat-widget" class="support-chat-widget">
     <button id="chat-toggle-btn" class="chat-toggle-btn" type="button" aria-label="Open Capitalix Support" aria-expanded="false">
@@ -302,7 +263,6 @@
         </svg>
         <span class="chat-notification-dot"></span>
     </button>
-
     <div id="chat-window" class="chat-window" aria-hidden="true">
         <div class="chat-header">
             <div class="chat-header-info">
@@ -318,7 +278,6 @@
                 </svg>
             </button>
         </div>
-
         <div id="chat-messages" class="chat-messages">
             <div class="chat-welcome">
                 <div class="chat-welcome-icon">
@@ -333,14 +292,12 @@
             </div>
             <div class="chat-message bot">Hi! How can we help you today?</div>
         </div>
-
         <div id="chat-actions" class="chat-actions">
             <div class="chat-actions-title">Need further assistance?</div>
             <p>Your conversation can be sent to our support team for follow-up.</p>
             <button id="chat-contact-btn" class="chat-action-primary" type="button">Continue to Contact Form</button>
             <button id="chat-email-btn" class="chat-action-secondary" type="button">Send via Email</button>
         </div>
-
         <form id="chat-form" class="chat-input-area">
             <div class="chat-input-wrapper">
                 <input type="text" id="chat-input" class="chat-input" placeholder="Type your message..." autocomplete="off" maxlength="1000">
@@ -354,7 +311,6 @@
         </form>
     </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const chatToggleBtn = document.getElementById('chat-toggle-btn');
@@ -366,34 +322,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const chatActions = document.getElementById('chat-actions');
     const chatEmailBtn = document.getElementById('chat-email-btn');
     const chatContactBtn = document.getElementById('chat-contact-btn');
-
     let currentSessionId = null;
     let conversationText = '';
-
     function openChat() {
         chatWindow.classList.add('is-open');
         chatWindow.setAttribute('aria-hidden', 'false');
         chatToggleBtn.setAttribute('aria-expanded', 'true');
         setTimeout(function () { chatInput.focus(); }, 250);
     }
-
     function closeChat() {
         chatWindow.classList.remove('is-open');
         chatWindow.setAttribute('aria-hidden', 'true');
         chatToggleBtn.setAttribute('aria-expanded', 'false');
     }
-
     chatToggleBtn.addEventListener('click', function () {
         chatWindow.classList.contains('is-open') ? closeChat() : openChat();
     });
-
     chatCloseBtn.addEventListener('click', closeChat);
-
     chatForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const message = chatInput.value.trim();
         if (!message) return;
-
         const userMessage = document.createElement('div');
         userMessage.className = 'chat-message user';
         userMessage.textContent = message;
@@ -401,13 +350,11 @@ document.addEventListener('DOMContentLoaded', function () {
         conversationText += 'Customer: ' + message + '\n';
         chatInput.value = '';
         scrollChatToBottom();
-
         const typingMessage = document.createElement('div');
         typingMessage.className = 'chat-message bot chat-typing';
         typingMessage.innerHTML = '<span></span><span></span><span></span>';
         chatMessages.appendChild(typingMessage);
         scrollChatToBottom();
-
         fetch('{% url "chat_send_message" %}', {
             method: 'POST',
             headers: {
@@ -439,12 +386,10 @@ document.addEventListener('DOMContentLoaded', function () {
             scrollChatToBottom();
         });
     });
-
     chatEmailBtn.addEventListener('click', function () {
         if (!currentSessionId) return;
         chatEmailBtn.disabled = true;
         chatEmailBtn.textContent = 'Sending...';
-
         fetch('{% url "chat_send_email" %}', {
             method: 'POST',
             headers: {
@@ -472,18 +417,15 @@ document.addEventListener('DOMContentLoaded', function () {
             chatEmailBtn.textContent = 'Send via Email';
         });
     });
-
     chatContactBtn.addEventListener('click', function () {
         sessionStorage.setItem('capitalix_support_message', conversationText);
         window.location.href = '{% url "contact" %}';
     });
-
     function scrollChatToBottom() {
         setTimeout(function () {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }, 50);
     }
-
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && chatWindow.classList.contains('is-open')) {
             closeChat();
